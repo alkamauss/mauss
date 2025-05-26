@@ -7,14 +7,14 @@
 		"format": "pnpm --filter \"./workspace/*\" format",
 		"test": "pnpm --filter \"./workspace/*\" test"
 	},
-	"packageManager": "pnpm@9.4.0",
-	"prettier": "./workspace/mauss/prettier.json",
+	"packageManager": "pnpm@10.11.0",
+	"prettier": "./workspace/mauss/prettier.config.js",
 	"devDependencies": {
-		"@types/node": "^22.7.7",
-		"prettier": "^3.3.3",
+		"@types/node": "^22.15.21",
+		"prettier": "^3.5.3",
 		"prettier-plugin-sort-package-json": "^0.2.0",
 		"tsm": "^2.3.0",
-		"typescript": "^5.6.3",
+		"typescript": "^5.8.3",
 		"uvu": "^0.5.6"
 	}
 }
