@@ -1,8 +1,8 @@
 {
 	"name": "mauss",
 	"version": "0.8.2",
-	"description": "fast and efficient type-safe SDK",
-	"repository": "github:alchemauss/mauss",
+	"description": "lightweight, modular, type-safe utilities",
+	"repository": "github:alkamauss/mauss",
 	"author": "Ignatius Bagus",
 	"license": "MIT",
 	"type": "module",
@@ -89,21 +89,17 @@
 	],
 	"prettier": "./prettier.config.js",
 	"keywords": [
-		"zero-dependency",
-		"strongly-typed",
+		"lightweight",
+		"modular",
 		"type-safe",
-		"fast",
+		"utility",
+		"zero-dependency",
+		"tree-shakable",
+		"strongly-typed",
 		"efficient",
 		"functional",
 		"declarative",
-		"modular",
-		"reusable",
-		"standard",
-		"typings",
 		"opinionated",
 		"settings"
-	],
-	"devDependencies": {
-		"dts-buddy": "^0.6.1"
-	}
+	]
 }
