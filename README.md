@@ -1,8 +1,8 @@
-# Mauss ![Total npm downloads](https://img.shields.io/npm/dt/mauss) &middot; ![Published npm version](https://img.shields.io/npm/v/mauss) ![Monthly npm downloads](https://img.shields.io/npm/dm/mauss) ![License](https://img.shields.io/github/license/alchemauss/mauss)
+# mauss
 
-> A declarative approach to a fast and efficient type-safe SDK
+> a lightweight and modular utility library for writing declarative, type-safe code
 
-A curated collection of modular and reusable development tools written with TypeScript.
+A focused set of modular, type-safe functions for writing compact declarative code.
 
 ## Installation
 
@@ -12,19 +12,15 @@ pnpm install mauss
 
 ### Why?
 
-The best of all possible worlds!
+The best of both worlds
 
-1. Conciseness of the functional paradigm — [less is more](https://spectrum.ieee.org/functional-programming)
-2. Predictable behavior from the consistency of pure function
-3. Readable and manageable code with declarative immutability
-4. Fast and efficient performance of imperative JavaScript
+1. The conciseness of the functional paradigm — [less is more](https://spectrum.ieee.org/functional-programming)
+2. The predictability of pure function and consistent behavior
+3. The readability of declarative immutability and clear data flow
+4. The performance of imperative JavaScript when it counts
 
-> Write a simpler, cleaner, more predictable code that results in a more maintainable software without sacrificing performance.
+> Write simpler, cleaner, more predictable code — without sacrificing performance or maintainability
 
-Natively, JavaScript already have some aspects to it and provides a wide set of built-in functional methods like `.map`, `.filter`, and `.reduce` that can be chained together indefinitely, but here's the caveat. By definition, the language is considered as a [multi-paradigm](https://en.wikipedia.org/wiki/JavaScript) [scripting language](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/What_is_JavaScript), which means — unlike a purely functional language, i.e., [Haskell](https://www.haskell.org/) — it is _not_ optimized for the functional paradigm, the application performance will suffer heavily, and it can reduce the maintainability of a codebase to some extent.
+Natively, JavaScript already have some functional patterns with built-in methods like `.map`, `.filter`, and `.reduce` that makes it easy to compose logic and can be chained together indefinitely. But there's a caveat, the language is considered as a [multi-paradigm](https://en.wikipedia.org/wiki/JavaScript) [scripting language](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/What_is_JavaScript) — not a purely functional one like [Haskell](https://www.haskell.org/). This means it is _not_ optimized for the functional paradigm, functional chaining can quickly become inefficient or hard to maintain, especially at scale. You get neither the purity of FP nor the performance of low-level control, and the application performance will suffer heavily as the codebase grows.
 
-Using modules provided by mauss, you can write shorter and simpler code with minimal chaining, and without degrading the performance of your application. A good understanding of software design principles and a discipline in the application of functional and declarative paradigms are still needed to achieve the most benefits. It does not nullify bad practices completely, but it does make it harder to do so...
-
----
-
-<h3 align="center"><pre>Mauss | <a href="LICENSE">MIT License</a></pre></h3>
+With `mauss`, you can write shorter, simpler, more declarative code without the overhead of deep chaining or over-abstractions. It encourages clarity and composition while staying close to JavaScript's performance model. Of course, no utility library replaces good design. `mauss` doesn't prevent bad practices — but it nudges you toward better ones.
