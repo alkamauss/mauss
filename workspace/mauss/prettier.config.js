@@ -16,26 +16,26 @@ const plugins = {
 
 const config = [
 	plugins['sort-package-json'] && {
-		files: ['package.json'],
+		files: 'package.json',
 		options: {
 			plugins: ['prettier-plugin-sort-package-json'],
 		},
 	},
 	{
-		files: ['pnpm-lock.yaml'],
+		files: ['pnpm-lock.yaml', '.svelte-kit/**/*'],
 		options: {
 			rangeEnd: 0,
 		},
 	},
 
 	{
-		files: ['*.md'],
+		files: '*.md',
 		options: {
 			tabWidth: 4,
 		},
 	},
 	{
-		files: ['*.svelte'],
+		files: '*.svelte',
 		options: {
 			plugins: ['prettier-plugin-svelte'],
 			svelteSortOrder: 'options-scripts-markup-styles',
@@ -45,7 +45,7 @@ const config = [
 		},
 	},
 	{
-		files: ['*.y*ml'],
+		files: '*.y*ml',
 		options: {
 			useTabs: false,
 		},
