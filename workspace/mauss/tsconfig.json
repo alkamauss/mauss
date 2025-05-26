@@ -3,6 +3,7 @@
 		// Project Options
 		"target": "ES2017",
 		"module": "Node16",
+		// "noEmit": true, // enable next major
 		"checkJs": true,
 		"isolatedModules": true,
 
