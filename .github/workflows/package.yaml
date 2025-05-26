@@ -15,5 +15,6 @@ jobs:
           cache: pnpm
 
       - run: pnpm install
+      - run: cp README.md workspace/mauss
       - working-directory: ./workspace/mauss
         run: pnpm publish --dry-run --no-git-checks
