@@ -15,8 +15,8 @@ importers:
         specifier: ^3.5.3
         version: 3.5.3
       prettier-plugin-sort-package-json:
-        specifier: ^0.2.0
-        version: 0.2.0(prettier@3.5.3)
+        specifier: ^1.0.1
+        version: 1.0.1(prettier@3.5.3)
       tsm:
         specifier: ^2.3.0
         version: 2.3.0
@@ -636,8 +636,8 @@ packages:
     resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
     engines: {node: ^10 || ^12 || >=14}
 
-  prettier-plugin-sort-package-json@0.2.0:
-    resolution: {integrity: sha512-jg+CfEHpmXyMJxoBSQh+IObmCxqt7KyHOuXGQm9D4heeyipEhlTJZfiS9SlfhBKrtf/yA8WZwHmynUG9xfF/rA==}
+  prettier-plugin-sort-package-json@1.0.1:
+    resolution: {integrity: sha512-2aEyB7/tFmDhZP4fkQACABYzduabSrq3VGQt7AR6JnVZ9RtboArDCgOZj+UA6vUPT1Rb6FqGB1oDOYqJ2zAqww==}
     peerDependencies:
       prettier: ^3.0.0
 
@@ -1193,7 +1193,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  prettier-plugin-sort-package-json@0.2.0(prettier@3.5.3):
+  prettier-plugin-sort-package-json@1.0.1(prettier@3.5.3):
     dependencies:
       prettier: 3.5.3
 
