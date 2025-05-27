@@ -11,8 +11,9 @@
 		"check": "pnpm check:code && pnpm check:style",
 		"check:code": "pnpm build:files --noEmit",
 		"check:style": "prettier -c .",
-		"test": "pnpm test:unit",
+		"test": "pnpm run \"/^test:.*/\"",
 		"test:unit": "uvu -r tsm src \"(spec\\.ts)\"",
+		"test:size": "size-limit --config scripts/size.ts",
 		"build:types": "tsm scripts/compile-types.ts",
 		"build:files": "tsc --project src",
 		"prepublishOnly": "pnpm build:types && pnpm build:files"

@@ -10,10 +10,12 @@
 	"packageManager": "pnpm@10.11.0",
 	"prettier": "./workspace/mauss/prettier.config.js",
 	"devDependencies": {
+		"@size-limit/preset-small-lib": "^11.2.0",
 		"@types/node": "^22.15.21",
 		"dts-buddy": "^0.6.1",
 		"prettier": "^3.5.3",
 		"prettier-plugin-sort-package-json": "^1.0.1",
+		"size-limit": "^11.2.0",
 		"tsm": "^2.3.0",
 		"typescript": "^5.8.3",
 		"uvu": "^0.5.6"
