@@ -20,6 +20,7 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - run: pnpm install
+      - run: cp README.md workspace/mauss
       - working-directory: ./workspace/mauss
         run: pnpm publish --no-git-checks
         env:
