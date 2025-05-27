@@ -1,6 +1,6 @@
 {
 	"name": "mauss",
-	"version": "0.8.2",
+	"version": "0.8.3",
 	"description": "lightweight, modular, type-safe utilities",
 	"repository": "github:alkamauss/mauss",
 	"author": "Ignatius Bagus",
