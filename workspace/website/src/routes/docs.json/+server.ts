@@ -32,23 +32,26 @@ export async function GET() {
 		schema[module] = [];
 
 		ts.forEachChild(source, (node) => {
-			if (ts.isExportDeclaration(node)) {
-				const symbols = tc.getExportsOfModule(tc.getSymbolAtLocation(node.moduleSpecifier));
-				symbols.forEach((symbol) => {
-					const decl = symbol.valueDeclaration || symbol.declarations[0];
-					if (!ts.isFunctionDeclaration(decl)) return;
+			if (ts.isExportDeclaration(node) && node.moduleSpecifier) {
+				const symbol = tc.getSymbolAtLocation(node.moduleSpecifier);
+				if (!symbol) return;
+				tc.getExportsOfModule(symbol).forEach((symbol) => {
+					const decl = symbol.valueDeclaration || symbol.declarations?.[0];
+					if (!decl || !ts.isFunctionDeclaration(decl)) return;
 
 					schema[module].push({
 						name: symbol.getName(),
 						docs: parse.jsdoc(decl),
 						get signature() {
 							const signature = tc.getSignatureFromDeclaration(decl);
+							if (!signature) return `function ${this.name}()`;
 							return `function ${this.name}${tc.signatureToString(signature)}`;
 						},
 					});
 				});
 			} else if (
 				ts.isFunctionDeclaration(node) &&
+				node.name &&
 				node.modifiers?.some((mod) => mod.kind === ts.SyntaxKind.ExportKeyword)
 			) {
 				schema[module].push({
@@ -56,6 +59,7 @@ export async function GET() {
 					docs: parse.jsdoc(node),
 					get signature() {
 						const signature = tc.getSignatureFromDeclaration(node);
+						if (!signature) return `function ${this.name}()`;
 						return `function ${this.name}${tc.signatureToString(signature)}`;
 					},
 				});
