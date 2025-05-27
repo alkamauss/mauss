@@ -4,18 +4,18 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "svelte-kit sync && vite build",
-		"format": "prettier -w . --plugin=prettier-plugin-sort-package-json",
+		"format": "prettier -w .",
 		"check": "pnpm run \"/^check:.*/\"",
-		"check:style": "prettier -c . --plugin=prettier-plugin-sort-package-json",
+		"check:style": "prettier -c .",
 		"check:svelte": "svelte-kit sync && svelte-check src --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-static": "^3.0.5",
-		"@sveltejs/kit": "^2.7.2",
-		"@sveltejs/vite-plugin-svelte": "^4.0.0",
-		"prettier-plugin-svelte": "^3.2.7",
-		"svelte": "^5.0.4",
-		"svelte-check": "^4.0.5",
-		"vite": "^5.4.9"
+		"@sveltejs/adapter-static": "^3.0.8",
+		"@sveltejs/kit": "^2.21.1",
+		"@sveltejs/vite-plugin-svelte": "^5.0.3",
+		"prettier-plugin-svelte": "^3.4.0",
+		"svelte": "^5.33.2",
+		"svelte-check": "^4.2.1",
+		"vite": "^6.3.5"
 	}
 }

@@ -17,6 +17,10 @@ const config = {
 		paths: {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH,
 		},
+
+		typescript: {
+			config: (settings) => ({ extends: '../../mauss/tsconfig.json', ...settings }),
+		},
 	},
 };
 
