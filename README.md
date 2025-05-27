@@ -43,9 +43,9 @@ An opinionated Prettier config for consistent code style with zero setup. Just p
 
 This config includes:
 
-- Automatic ignore rules for `pnpm-lock.yaml` and generated directories like `.svelte-kit/`
+- Ignore rules for `pnpm-lock.yaml` and generated directories like `.svelte-kit/`
 - Support for `*.svelte` files via [`prettier-plugin-svelte`](https://github.com/sveltejs/prettier-plugin-svelte) (install separately)
-- Optional sorting of `package.json` files with [`prettier-plugin-sort-package-json`](https://github.com/ignatiusmb/prettier-plugin-sort-package-json) (install separately)
+- Optional sorting for `package.json` via [`prettier-plugin-sort-package-json`](https://github.com/ignatiusmb/prettier-plugin-sort-package-json) (install separately)
 
 ### `/tsconfig.json`
 
