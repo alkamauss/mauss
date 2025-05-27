@@ -19,7 +19,7 @@ The best of both worlds
 3. The readability of declarative immutability and clear data flow
 4. The performance of imperative JavaScript when it counts
 
-> Write simpler, cleaner, more predictable code — without sacrificing performance or maintainability
+> Write concise, declarative code with no side effects — without sacrificing performance or maintainability
 
 Natively, JavaScript includes functional patterns through built-in array methods like `.map`, `.filter`, and `.reduce`, which makes it easy to compose logic through chaining. However, JavaScript is considered as a [multi-paradigm](https://en.wikipedia.org/wiki/JavaScript) [scripting language](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/What_is_JavaScript) — not a purely functional one like [Haskell](https://www.haskell.org/). It is _not_ optimized for the functional paradigm, especially heavy functional chaining. As the codebase grows in size and complexity, performance and maintainability often suffer.
 
