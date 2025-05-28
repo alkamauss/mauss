@@ -20,6 +20,9 @@ importers:
       prettier-plugin-sort-package-json:
         specifier: ^1.0.1
         version: 1.0.1(prettier@3.5.3)
+      prettier-plugin-svelte:
+        specifier: ^3.4.0
+        version: 3.4.0(prettier@3.5.3)(svelte@5.33.2)
       tsm:
         specifier: ^2.3.0
         version: 2.3.0
@@ -43,9 +46,6 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.3
         version: 5.0.3(svelte@5.33.2)(vite@6.3.5(@types/node@22.15.21))
-      prettier-plugin-svelte:
-        specifier: ^3.4.0
-        version: 3.4.0(prettier@3.5.3)(svelte@5.33.2)
       svelte:
         specifier: ^5.33.2
         version: 5.33.2
