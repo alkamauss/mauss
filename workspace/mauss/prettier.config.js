@@ -22,7 +22,7 @@ const config = [
 		},
 	},
 	{
-		files: ['pnpm-lock.yaml', '.svelte-kit/**/*'],
+		files: ['pnpm-lock.yaml', '**/.svelte-kit/**'],
 		options: {
 			rangeEnd: 0,
 		},

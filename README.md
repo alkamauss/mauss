@@ -37,7 +37,7 @@ An opinionated Prettier config for consistent code style with zero setup. Just p
 
 ```json
 {
-  "prettier": "mauss/prettier.config.js",
+	"prettier": "mauss/prettier.config.js"
 }
 ```
 
@@ -53,5 +53,6 @@ A minimal base `tsconfig` with strict type-checking and sensible defaults for co
 
 ```json
 {
-  "extends": "mauss/tsconfig.json"
+	"extends": "mauss/tsconfig.json"
 }
+```
