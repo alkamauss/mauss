@@ -3,18 +3,22 @@
 	"type": "module",
 	"scripts": {
 		"clean": "git add * && git clean -dfx -e node_modules",
-		"check": "pnpm --filter \"./workspace/*\" check",
-		"format": "pnpm --filter \"./workspace/*\" format",
+		"format": "prettier --write .",
+		"check": "pnpm run \"/^check:.*/\"",
+		"check:style": "prettier --check .",
+		"check:workspace": "pnpm --filter \"./workspace/*\" check",
 		"test": "pnpm --filter \"./workspace/*\" test"
 	},
-	"packageManager": "pnpm@9.4.0",
-	"prettier": "./workspace/mauss/prettier.json",
+	"packageManager": "pnpm@10.11.0",
+	"prettier": "./workspace/mauss/prettier.config.js",
 	"devDependencies": {
-		"@types/node": "^20.14.9",
-		"prettier": "^3.3.2",
-		"prettier-plugin-sort-package-json": "^0.2.0",
+		"@types/node": "^22.15.21",
+		"dts-buddy": "^0.6.1",
+		"prettier": "^3.5.3",
+		"prettier-plugin-sort-package-json": "^1.0.1",
+		"prettier-plugin-svelte": "^3.4.0",
 		"tsm": "^2.3.0",
-		"typescript": "^5.5.3",
+		"typescript": "^5.8.3",
 		"uvu": "^0.5.6"
 	}
 }

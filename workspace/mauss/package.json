@@ -1,16 +1,16 @@
 {
 	"name": "mauss",
-	"version": "0.8.1",
-	"description": "fast and efficient type-safe SDK",
-	"repository": "github:alchemauss/mauss",
+	"version": "0.8.3",
+	"description": "lightweight, modular, type-safe utilities",
+	"repository": "github:alkamauss/mauss",
 	"author": "Ignatius Bagus",
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"format": "prettier -w . --plugin=prettier-plugin-sort-package-json",
+		"format": "prettier -w .",
 		"check": "pnpm check:code && pnpm check:style",
 		"check:code": "pnpm build:files --noEmit",
-		"check:style": "prettier -c . --plugin=prettier-plugin-sort-package-json",
+		"check:style": "prettier -c .",
 		"test": "pnpm test:unit",
 		"test:unit": "uvu -r tsm src \"(spec\\.ts)\"",
 		"build:types": "tsm scripts/compile-types.ts",
@@ -51,6 +51,10 @@
 			"types": "./index.d.ts",
 			"default": "./src/math/index.js"
 		},
+		"./promises": {
+			"types": "./index.d.ts",
+			"default": "./src/promises/index.js"
+		},
 		"./random": {
 			"types": "./index.d.ts",
 			"default": "./src/random/index.js"
@@ -71,6 +75,7 @@
 			"types": "./index.d.ts"
 		},
 		"./package.json": "./package.json",
+		"./prettier.config.js": "./prettier.config.js",
 		"./prettier.json": "./prettier.json",
 		"./tsconfig.json": "./tsconfig.json"
 	},
@@ -78,26 +83,22 @@
 		"src/**/*.js",
 		"index.d.ts",
 		"index.d.ts.map",
+		"prettier.config.js",
 		"prettier.json",
 		"tsconfig.json"
 	],
-	"prettier": "./prettier.json",
 	"keywords": [
-		"zero-dependency",
-		"strongly-typed",
+		"lightweight",
+		"modular",
 		"type-safe",
-		"fast",
+		"utility",
+		"zero-dependency",
+		"tree-shakable",
+		"strongly-typed",
 		"efficient",
 		"functional",
 		"declarative",
-		"modular",
-		"reusable",
-		"standard",
-		"typings",
 		"opinionated",
 		"settings"
-	],
-	"devDependencies": {
-		"dts-buddy": "^0.5.1"
-	}
+	]
 }
