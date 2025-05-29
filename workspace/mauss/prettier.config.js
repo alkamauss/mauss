@@ -22,7 +22,7 @@ const config = [
 		},
 	},
 	{
-		files: ['pnpm-lock.yaml', '.svelte-kit/**/*'],
+		files: ['pnpm-lock.yaml', '**/.svelte-kit/**'],
 		options: {
 			rangeEnd: 0,
 		},
@@ -52,12 +52,12 @@ const config = [
 	},
 ];
 
-export const {
-	printWidth = 100,
-	semi = true,
-	singleQuote = true,
-	tabWidth = 2,
-	trailingComma = 'all',
-	useTabs = true,
-	overrides = config.filter((o) => o),
-} = /** @type {import('prettier').Config} */ ({});
+export default /** @type {import('prettier').Config} */ ({
+	printWidth: 100,
+	semi: true,
+	singleQuote: true,
+	tabWidth: 2,
+	trailingComma: 'all',
+	useTabs: true,
+	overrides: config.filter((o) => o),
+});

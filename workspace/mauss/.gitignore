@@ -1,5 +1,1 @@
-*.js
-*.d.ts
-*.map
-
 !prettier.config.js

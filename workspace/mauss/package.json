@@ -87,7 +87,6 @@
 		"prettier.json",
 		"tsconfig.json"
 	],
-	"prettier": "./prettier.config.js",
 	"keywords": [
 		"lightweight",
 		"modular",
