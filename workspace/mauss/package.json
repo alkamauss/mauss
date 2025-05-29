@@ -76,7 +76,6 @@
 		},
 		"./package.json": "./package.json",
 		"./prettier.config.js": "./prettier.config.js",
-		"./prettier.json": "./prettier.json",
 		"./tsconfig.json": "./tsconfig.json"
 	},
 	"files": [
@@ -84,7 +83,6 @@
 		"index.d.ts",
 		"index.d.ts.map",
 		"prettier.config.js",
-		"prettier.json",
 		"tsconfig.json"
 	],
 	"keywords": [
