@@ -1,6 +1,55 @@
 import type { AnyFunction, Last, UnaryFunction } from '../../typings/helpers.js';
 import type { Progressive, Slice } from '../../typings/prototypes.js';
 
+/**
+ * A function that will execute a `work` asynchronously and will not throw an error.
+ *
+ * @param work a function with an asynchronous operation
+ * @template T the type of the data returned by the promise
+ * @returns an object with either `data` or `error` property
+ * @example
+ * ```typescript
+ * const { data, error } = await attempt(async () => {
+ *   // some async operation
+ *   return 'result';
+ * });
+ * if (error) { // could also be `data`
+ *   // log error or do other things
+ * }
+ * ```
+ */
+export async function attempt<T>(work: () => Promise<T>): Promise<{ data?: T; error?: unknown }> {
+	try {
+		return { data: await work() };
+	} catch (error) {
+		return { error };
+	}
+}
+/**
+ * A function that will execute a `work` synchronously and will not throw an error.
+ *
+ * @param work a function with a synchronous operation
+ * @template T the type of the data returned by the function
+ * @returns an object with either `data` or `error` property
+ * @example
+ * ```typescript
+ * const { data, error } = attempt(() => {
+ *   // some sync operation
+ *   return 'result';
+ * });
+ * if (error) { // could also be `data`
+ *   // log error or do other things
+ * }
+ * ```
+ */
+attempt.sync = function <T>(work: () => T): { data?: T; error?: unknown } {
+	try {
+		return { data: work() };
+	} catch (error) {
+		return { error };
+	}
+};
+
 type Currying<Fun extends AnyFunction> = <Arguments extends Progressive<Parameters<Fun>>>(
 	...args: Arguments
 ) => Arguments['length'] extends Parameters<Fun>['length']
@@ -44,53 +93,5 @@ export function pipe<F extends UnaryFunction[]>(...functions: Validator<F>) {
 			pipeline = functions[i](pipeline);
 		}
 		return pipeline;
-	};
-}
-
-function error(msg?: string) {
-	const error = msg || '';
-	return { kind: 'error' as const, error };
-}
-function success<T>(value: T) {
-	return { kind: 'success' as const, value };
-}
-
-type Result<T> = ReturnType<typeof error> | ReturnType<typeof success<T>>;
-
-function cast<X, Y extends X>(fn: (x: X) => x is Y) {
-	return (arg: X): Result<Y> => {
-		try {
-			return fn(arg) ? success(arg) : error();
-		} catch {
-			return error();
-		}
-	};
-}
-
-export const mask = {
-	of<T>(fn: () => T): Result<T> {
-		try {
-			return success(fn());
-		} catch {
-			return error();
-		}
-	},
-
-	async resolve<T>(p: Promise<T>): Promise<Result<T>> {
-		return p.then((v) => success(v)).catch(() => error());
-	},
-
-	wrap: cast(<T>(i: T | undefined | null): i is T => i != null),
-} as const;
-
-export function reveal<T>(opt: Result<T>) {
-	return {
-		expect(message: string) {
-			if (opt.kind === 'success') return opt.value;
-			throw new Error(message);
-		},
-		or(fallback: T): T {
-			return opt.kind === 'success' ? opt.value : fallback;
-		},
 	};
 }
