@@ -1,4 +1,4 @@
-export { curry, pipe } from './lambda/index.js';
+export { attempt, curry, pipe } from './lambda/index.js';
 
 export { debounce, immediate, throttle } from './processor/index.js';
 
