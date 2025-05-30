@@ -1,12 +1,32 @@
 import { suite } from 'uvu';
 import * as assert from 'uvu/assert';
-
 import * as lambda from './index.js';
 
 const suites = {
+	'attempt/': suite('lambda/attempt'),
 	'curry/': suite('lambda/curry'),
 	'pipe/': suite('lambda/pipe'),
 };
+
+suites['attempt/']('properly attempt some work', () => {
+	assert.equal(
+		lambda.attempt.sync(() => ''),
+		{ data: '' },
+	);
+	assert.equal(
+		lambda.attempt.sync(() => {
+			throw '';
+		}),
+		{ error: '' },
+	);
+
+	const answer = lambda.attempt.sync(() => 42);
+	assert.equal(answer.data, 42);
+
+	let maybe: string | null | undefined;
+	const work = lambda.attempt.sync(() => maybe);
+	assert.equal(work.data || '2023-04-04', '2023-04-04');
+});
 
 suites['curry/']('properly curry a function', () => {
 	const sum = (a: number, b: number, c: number) => a + b + c;

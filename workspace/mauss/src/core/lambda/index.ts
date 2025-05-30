@@ -1,6 +1,55 @@
 import type { AnyFunction, Last, UnaryFunction } from '../../typings/helpers.js';
 import type { Progressive, Slice } from '../../typings/prototypes.js';
 
+/**
+ * A function that will execute a `work` asynchronously and will not throw an error.
+ *
+ * @param work a function with an asynchronous operation
+ * @template T the type of the data returned by the promise
+ * @returns an object with either `data` or `error` property
+ * @example
+ * ```typescript
+ * const { data, error } = await attempt(async () => {
+ *   // some async operation
+ *   return 'result';
+ * });
+ * if (error) { // could also be `data`
+ *   // log error or do other things
+ * }
+ * ```
+ */
+export async function attempt<T>(work: () => Promise<T>): Promise<{ data?: T; error?: unknown }> {
+	try {
+		return { data: await work() };
+	} catch (error) {
+		return { error };
+	}
+}
+/**
+ * A function that will execute a `work` synchronously and will not throw an error.
+ *
+ * @param work a function with a synchronous operation
+ * @template T the type of the data returned by the function
+ * @returns an object with either `data` or `error` property
+ * @example
+ * ```typescript
+ * const { data, error } = attempt(() => {
+ *   // some sync operation
+ *   return 'result';
+ * });
+ * if (error) { // could also be `data`
+ *   // log error or do other things
+ * }
+ * ```
+ */
+attempt.sync = function <T>(work: () => T): { data?: T; error?: unknown } {
+	try {
+		return { data: work() };
+	} catch (error) {
+		return { error };
+	}
+};
+
 type Currying<Fun extends AnyFunction> = <Arguments extends Progressive<Parameters<Fun>>>(
 	...args: Arguments
 ) => Arguments['length'] extends Parameters<Fun>['length']
