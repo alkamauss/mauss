@@ -7,7 +7,7 @@ A focused set of modular, type-safe functions for writing compact declarative co
 ## Installation
 
 ```bash
-pnpm install mauss
+pnpm add mauss
 ```
 
 ### Why?
