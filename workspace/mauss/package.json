@@ -71,6 +71,10 @@
 			"types": "./index.d.ts",
 			"default": "./src/web/index.js"
 		},
+		"./yaml": {
+			"types": "./index.d.ts",
+			"default": "./src/yaml/index.js"
+		},
 		"./typings": {
 			"types": "./index.d.ts"
 		},
