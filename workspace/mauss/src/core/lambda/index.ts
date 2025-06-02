@@ -1,4 +1,4 @@
-import type { AnyFunction, Last, UnaryFunction } from '../../typings/helpers.js';
+import type { AnyFunction, UnaryFunction } from '../../typings/helpers.js';
 import type { Progressive, Slice } from '../../typings/prototypes.js';
 
 /**
@@ -85,9 +85,8 @@ type Validator<
  * @returns a function that takes in the initial type and returns the final type
  */
 export function pipe<F extends UnaryFunction[]>(...functions: Validator<F>) {
-	type InitialType = Parameters<F[0]>[0];
-	type FinalType = ReturnType<Last<F, any>>;
-	return (arg: InitialType): FinalType => {
+	type Final = F extends [...any[], infer L] ? L : any;
+	return (arg: Parameters<F[0]>[0]): ReturnType<Final> => {
 		let pipeline = arg;
 		for (let i = 0; i < functions.length; i++) {
 			pipeline = functions[i](pipeline);

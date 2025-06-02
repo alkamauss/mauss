@@ -7,15 +7,11 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"format": "prettier -w .",
-		"check": "pnpm check:code && pnpm check:style",
-		"check:code": "pnpm build:files --noEmit",
-		"check:style": "prettier -c .",
-		"test": "pnpm test:unit",
-		"test:unit": "uvu -r tsm src \"(spec\\.ts)\"",
+		"check": "pnpm build:files",
+		"test": "uvu -r tsm src \"(spec\\.ts)\"",
 		"build:types": "tsm scripts/compile-types.ts",
 		"build:files": "tsc --project src",
-		"prepublishOnly": "pnpm build:types && pnpm build:files"
+		"prepublishOnly": "pnpm run \"/^build:.*/\""
 	},
 	"typings": "./index.d.ts",
 	"exports": {

@@ -33,16 +33,18 @@ async (/* attempt */) => {
 	const cap = (v: string) => v.toUpperCase();
 	const split = (v: string) => v.split('');
 
-	pipe(cap);
-	pipe(cap, split);
-	pipe(name, split);
-	pipe(name, cap, split);
-	pipe(name, cap, cap, split);
+	expect<(v: string) => string>(pipe(cap));
+	expect<(v: string) => string[]>(pipe(cap, split));
+	expect<(v: { name: string }) => string[]>(pipe(name, split));
+	expect<(v: { name: string }) => string[]>(pipe(name, cap, split));
+	expect<(v: { name: string }) => string[]>(pipe(name, cap, cap, split));
 
-	pipe(
-		(v: boolean) => +v,
-		(v: number) => (v > 0 ? 'y' : 'n'),
-		(v: string) => v === 'y',
+	expect<(v: boolean) => boolean>(
+		pipe(
+			(v: boolean) => +v,
+			(v: number) => (v > 0 ? 'y' : 'n'),
+			(v: string) => v === 'y',
+		),
 	);
 
 	// ---- errors ----
