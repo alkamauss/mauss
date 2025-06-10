@@ -1,6 +1,24 @@
 import { UnaryFunction } from '../../typings/helpers.js';
 
-type Parse<T> = T extends `${string}{${infer P}}${infer R}` ? P | Parse<R> : never;
+/** Joins all given parameters together using `/`, regardless of the platform */
+export function catenate(...paths: string[]): string {
+	if (!paths.length) return '.';
+	const index = paths[0].replace(/\\/g, '/').trim();
+	if (paths.length === 1 && index === '') return '.';
+	const parts = index.replace(/[/]*$/g, '').split('/');
+	if (parts[0] === '') parts.shift();
+
+	for (let i = 1; i < paths.length; i += 1) {
+		const part = paths[i].replace(/\\/g, '/').trim();
+		for (const slice of part.split('/')) {
+			if (slice === '.') continue;
+			if (slice === '..') parts.pop();
+			else if (slice) parts.push(slice);
+		}
+	}
+
+	return (index[0] === '/' ? '/' : '') + parts.join('/');
+}
 
 /**
  * A type-safe template string function that accepts a string template with placeholders and returns a function that can take in an object with the same keys as the placeholders. The function will replace the placeholders with the corresponding values from the object. Parameters of the braces can be prefixed with a question mark `?` to make it optional to the type system and will fallback to an empty string if it's not defined in the table.
@@ -53,6 +71,8 @@ export function tsf<Input extends string>(
 			parts.push(template.slice(start));
 		}
 	}
+
+	type Parse<T> = T extends `${string}{${infer P}}${infer R}` ? P | Parse<R> : never;
 
 	type AcceptedValues = string | false | null | undefined;
 	type ExpectedProps = string extends Input ? string : Parse<Input>;
