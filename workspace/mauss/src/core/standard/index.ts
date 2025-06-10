@@ -98,13 +98,6 @@ export function regexp(pattern: string, flags?: string): RegExp {
 }
 
 /**
- * A convenience function to declare a variable with multiple conditionals to determine its final value, without cluttering the global or top-level scope with temporary variables that are only used once, and avoid nested ternary hell.
- */
-export function scope<T>(fn: () => T) {
-	return fn();
-}
-
-/**
  * A function that accepts an indexable object.
  * @returns `{ head, last }` of the object
  */
