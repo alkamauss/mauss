@@ -7,6 +7,7 @@ export interface FetcherConfig {
 	/**
 	 * Prepares an object to pass into fetch that is called before the request is sent, it receives the specified `method` and `to` url string, and optionally a `body`, `from` URL, and `headers` object. It should _prepare_ and return an object that satisfies the [`RequestInit`](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request) interface
 	 * @param {RequestInit} opts request init options
+	 * @default ({ method, body }) => ({ method, body: JSON.stringify(body) })
 	 */
 	prepare?(opts: {
 		method: HTTPMethods;
@@ -18,22 +19,25 @@ export interface FetcherConfig {
 	/**
 	 * Intercepts the `url` before the request passed to fetch
 	 * @param {string} path url received from all api methods
+	 * @default (url) => url
 	 */
 	intercept?(path: string): string;
 	/**
 	 * Catches error from `fetch` failure and returns a string
+	 * @default () => 'NetworkError: Please try again later.'
 	 */
 	sweep?(exception: unknown): string;
 	/**
 	 * Transforms raw response to desired data structure, it receives the response and can return anything that will used as the `payload`
 	 * @param {Response} res response object from fetch
-	 * @default r.json().catch(() => ({}))
+	 * @default () => r.json().catch(() => ({}))
 	 */
 	transform?(res: Response): Promise<unknown>;
 	/**
 	 * Determines if fetcher should exit with an error, this function is called after the response is transformed and receives a clone of the initial response and the `payload`
 	 * @param {Response} res response object from fetch
 	 * @returns `string` if the request was unsuccessful or anything falsy if it was successful
+	 * @default ({ ok }) => !ok && 'UnexpectedError: Try again later.'
 	 */
 	exit?(res: Response, payload: any): AlsoPromise<string | false | Nullish>;
 }
@@ -96,12 +100,20 @@ export function fetcher({
 	transform = (r) => r.json().catch(() => ({})),
 	exit = ({ ok }) => !ok && 'UnexpectedError: Try again later.',
 }: FetcherConfig) {
-	async function send<T>(
-		{ headers, from, using }: SendOptions,
-		method: HTTPMethods,
-		url: string,
-		body?: any,
-	): Promise<{ kind: 'error'; error: string } | { kind: 'success'; value: T }> {
+	type InternalSend = SendOptions & {
+		method: HTTPMethods;
+		url: string;
+		body?: any;
+	};
+
+	async function send<T>({
+		headers,
+		from,
+		using,
+		method,
+		url,
+		body,
+	}: InternalSend): Promise<{ kind: 'error'; error: string } | { kind: 'success'; value: T }> {
 		let response: Response;
 		try {
 			const opts = prepare({ method, to: url, body, from, headers });
@@ -119,16 +131,16 @@ export function fetcher({
 	return function http(url: string, options: SendOptions = {}) {
 		return {
 			get<T>() {
-				return send<T>(options, 'GET', url);
+				return send<T>({ method: 'GET', url, ...options });
 			},
 			post<T>(payload?: any) {
-				return send<T>(options, 'POST', url, payload);
+				return send<T>({ method: 'POST', url, body: payload, ...options });
 			},
 			put<T>(payload?: any) {
-				return send<T>(options, 'PUT', url, payload);
+				return send<T>({ method: 'PUT', url, body: payload, ...options });
 			},
 			delete<T>() {
-				return send<T>(options, 'DELETE', url);
+				return send<T>({ method: 'DELETE', url, ...options });
 			},
 		};
 	};

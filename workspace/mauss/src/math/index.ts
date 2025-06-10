@@ -1,5 +1,3 @@
-export { permutation } from './set/index.js';
-
 /**
  * Calculates the mean from a list of numbers using an incremental approach (moving average algorithm), which uses a constant space and updates in constant time. This method helps avoid potential numerical instability issues when dealing with a large sum, such as an integer overflow.
  *
@@ -36,4 +34,18 @@ export function clamp(min: number, max: number) {
  */
 export function modulo(a: number, n: number): number {
 	return ((a % n) + n) % n;
+}
+
+/** generate all possible permutations from all items in an array */
+export function permutation<T, K>(input: T[], fn?: (i: T[]) => K) {
+	const results: Array<T[] | K> = [];
+	const permute = (arr: T[], m: T[] = []): void | number => {
+		if (!arr.length) return results.push(fn ? fn(m) : m);
+		for (let i = 0; i < arr.length; i++) {
+			const curr = arr.slice();
+			const next = curr.splice(i, 1);
+			permute(curr, m.concat(next));
+		}
+	};
+	return permute(input), results;
 }

@@ -1,16 +1,9 @@
+/** A convenience function to declare a variable with multiple conditionals to determine its final value, without cluttering the global or top-level scope with temporary variables that are only used once, and avoid nested ternary hell. */
+export function scope<T>(fn: () => T) {
+	return fn();
+}
+
 export { attempt, curry, pipe } from './lambda/index.js';
-
 export { debounce, immediate, throttle } from './processor/index.js';
-
-export {
-	capitalize,
-	identical,
-	indent,
-	inverse,
-	regexp,
-	scope,
-	sides,
-	unique,
-} from './standard/index.js';
-
-export { tsf } from './tsf/index.js';
+export { capitalize, identical, indent, inverse, regexp, sides, unique } from './standard/index.js';
+export { tsf } from './string/index.js';

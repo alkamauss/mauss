@@ -14,6 +14,6 @@ export function debounce<F extends AnyFunction>(fn: F, time = DURATION) {
 	};
 }
 
-export async function pause(ms: number): Promise<string> {
+export async function pause(ms: number): Promise<void> {
 	return new Promise((fulfil) => setTimeout(fulfil, ms));
 }
