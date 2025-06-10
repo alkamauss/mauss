@@ -2,27 +2,53 @@ name: REL
 
 on:
   push:
-    tags: ['v*']
-    branches-ignore: ['**']
+    branches: [master]
 
 jobs:
-  publish:
+  detect:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
+    if: startsWith(github.event.head_commit.message, 'release ~')
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          registry-url: https://registry.npmjs.org
+          fetch-depth: 2 # to diff the changed versions
 
-      - run: pnpm install
-      - run: cp README.md workspace/mauss
-      - working-directory: ./workspace/mauss
-        run: pnpm publish --no-git-checks
+      - id: set
+        run: |
+          MATRIX=()
+          for f in workspace/*/package.json; do
+            PREV=$(git show HEAD^:"$f" 2>/dev/null | jq -r .version || echo "")
+            CURR=$(jq -r .version "$f")
+            NAME=$(jq -r .name "$f")
+            
+            if [ "$PREV" != "$CURR" ]; then
+              MATRIX+=("{\"name\":\"$NAME\",\"version\":\"$CURR\"}")
+            fi
+          done
+
+          if [ ${#MATRIX[@]} -eq 0 ]; then
+            echo "matrix=" >> "$GITHUB_OUTPUT"
+          else
+            JSON="{\"include\":[$(IFS=,; echo "${MATRIX[*]}")]}"
+            echo "matrix=$JSON" >> "$GITHUB_OUTPUT"
+          fi
+
+  release:
+    needs: detect
+    if: needs.detect.outputs.matrix != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      matrix: ${{ fromJson(needs.detect.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: | # gh will create the matching git tag
+          gh release create "${{ matrix.name }}@${{ matrix.version }}" --draft \
+            --title "${{ matrix.name }}@${{ matrix.version }}" --generate-notes
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
