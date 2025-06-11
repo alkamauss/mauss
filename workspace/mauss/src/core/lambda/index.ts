@@ -49,6 +49,15 @@ attempt.sync = function <T>(work: () => T): { data?: T; error?: unknown } {
 		return { error };
 	}
 };
+attempt.wrap = function <F extends AnyFunction>(fn: F) {
+	return (...args: Parameters<F>): { data?: ReturnType<F>; error?: unknown } => {
+		try {
+			return { data: fn(...args) };
+		} catch (error) {
+			return { error };
+		}
+	};
+};
 
 type Currying<Fun extends AnyFunction> = <Arguments extends Progressive<Parameters<Fun>>>(
 	...args: Arguments
