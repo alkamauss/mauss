@@ -1,8 +1,6 @@
 import type { AnyFunction, UnaryFunction } from '../../typings/helpers.js';
 import type { Progressive, Slice } from '../../typings/prototypes.js';
 
-
-
 type Currying<Fun extends AnyFunction> = <Arguments extends Progressive<Parameters<Fun>>>(
 	...args: Arguments
 ) => Arguments['length'] extends Parameters<Fun>['length']
