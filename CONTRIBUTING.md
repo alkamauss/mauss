@@ -32,6 +32,5 @@ For maintainers of the project.
 
 ### Publishing
 
-0. prepare a [new release draft](https://github.com/alkamauss/mauss/releases/new) with a new tag
-1. bump version in [`package.json`](workspace/mauss/package.json) and commit with `~ vX.Y.Z`
-2. publish release draft and title release with `X.Y.Z`
+1. bump version in [`package.json`](workspace/mauss/package.json) and commit with `release ~ vX.Y.Z`
+2. modify as needed and publish the release drafted by `github-actions`

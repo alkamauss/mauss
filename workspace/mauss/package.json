@@ -59,10 +59,6 @@
 			"types": "./index.d.ts",
 			"default": "./src/std/index.js"
 		},
-		"./sys": {
-			"types": "./index.d.ts",
-			"default": "./src/sys/index.js"
-		},
 		"./web": {
 			"types": "./index.d.ts",
 			"default": "./src/web/index.js"
