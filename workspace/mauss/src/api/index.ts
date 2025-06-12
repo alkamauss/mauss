@@ -113,19 +113,19 @@ export function fetcher({
 		method,
 		url,
 		body,
-	}: InternalSend): Promise<{ kind: 'error'; error: string } | { kind: 'success'; value: T }> {
+	}: InternalSend): Promise<{ data?: T; error?: string }> {
 		let response: Response;
 		try {
 			const opts = prepare({ method, to: url, body, from, headers });
 			response = await (using || fetch)(intercept(url), opts);
 		} catch (exception) {
-			return { kind: 'error', error: sweep(exception) };
+			return { error: sweep(exception) };
 		}
 
 		const payload = (await transform(response.clone())) as T;
 		const error = await exit(response.clone(), payload);
-		if (error) return { kind: 'error', error };
-		return { kind: 'success', value: payload };
+		if (error) return { error };
+		return { data: payload };
 	}
 
 	return function http(url: string, options: SendOptions = {}) {
