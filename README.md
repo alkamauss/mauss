@@ -27,7 +27,7 @@ With `mauss`, you can write shorter, simpler, more declarative code without the 
 
 ## Usage
 
-`mauss` is modular, tree-shakeable, and comes with no dependencies — its footprint is minimal, basically free. It also includes some convenience exports to streamline your workflow, such as:
+`mauss` is modular, tree-shakeable, and comes with no dependencies — its footprint is so small, it's basically free. Let's start with some convenience exports to quickly get you started with any projects, such as:
 
 <!-- use `size-limit` to show the minimal footprint -->
 
