@@ -1,19 +1,21 @@
-import qse from './encoder.js';
+import { qse } from './index.js';
 
-qse({});
+(/* qs encoder */) => {
+	qse({});
 
-interface SearchParams {
-	a: string;
-	b: string;
-}
-const search = {} as SearchParams;
-qse(search);
+	interface SearchParams {
+		a: string;
+		b: string;
+	}
+	const search = {} as SearchParams;
+	qse(search);
 
-// ---- errors ----
+	// ---- errors ----
 
-// @ts-expect-error - error on empty argument
-qse();
-// @ts-expect-error - error on string type
-qse('');
-// @ts-expect-error - error on non-object type
-qse(null);
+	// @ts-expect-error - error on empty argument
+	qse();
+	// @ts-expect-error - error on string type
+	qse('');
+	// @ts-expect-error - error on non-object type
+	qse(null);
+};
