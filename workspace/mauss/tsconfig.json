@@ -1,24 +1,18 @@
 {
 	"compilerOptions": {
-		// Project Options
 		"target": "es2020",
 		"module": "nodenext",
+		"moduleResolution": "nodenext",
 		"noEmit": true,
 		"checkJs": true,
 		"isolatedModules": true,
 
-		// Module Resolution
-		"moduleResolution": "nodenext",
-		"resolveJsonModule": true,
-
-		// Linter Checks
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noImplicitReturns": true,
-
-		// Advanced
 		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true
 	}
 }
