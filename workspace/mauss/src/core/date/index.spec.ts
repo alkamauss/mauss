@@ -117,7 +117,6 @@ suites['date/delta']('delta in days', () => {
 });
 suites['date/delta']('delta in months', () => {
 	const test = date(DATE);
-	"2017/09/08, 13:02:03"
 	assert.equal(test.delta('2017/10/08, 13:02:03').months, -1);
 });
 suites['date/delta']('delta in years', () => {
