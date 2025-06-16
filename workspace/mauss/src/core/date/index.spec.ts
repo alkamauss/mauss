@@ -143,16 +143,27 @@ suites['date/is.same']('is same as another date', () => {
 	assert.not(test.is.same('2017/09/08, 13:02:02'));
 });
 
-suites['date/to.relative']('basic relative', () => {
+suites['date/to.relative']('default relative', () => {
 	const now = new Date('2025-06-14T12:00:00Z');
 
-	assert.equal(date('2025-06-14T12:00:00Z').to.relative(now), 'just now');
+	assert.equal(date('2025-06-14T12:00:00Z').to.relative(now), 'now');
 	assert.equal(date('2025-06-14T12:00:03Z').to.relative(now), 'in 3 seconds');
 	assert.equal(date('2025-06-14T12:01:00Z').to.relative(now), 'in 1 minute');
 	assert.equal(date('2025-06-14T15:00:00Z').to.relative(now), 'in 3 hours');
 	assert.equal(date('2025-06-16T12:00:00Z').to.relative(now), 'in 2 days');
-	assert.equal(date('2025-05-14T12:00:00Z').to.relative(now), '1 month ago');
+	assert.equal(date('2025-05-14T12:00:00Z').to.relative(now), 'last month');
 	assert.equal(date('2023-06-14T12:00:00Z').to.relative(now), '2 years ago');
+});
+suites['date/to.relative']('relative id', () => {
+	const now = new Date('2025-06-14T12:00:00Z');
+
+	assert.equal(date('2025-06-14T12:00:00Z').to.relative(now, 'id'), 'sekarang');
+	assert.equal(date('2025-06-14T12:00:03Z').to.relative(now, 'id'), 'dalam 3 detik');
+	assert.equal(date('2025-06-14T12:01:00Z').to.relative(now, 'id'), 'dalam 1 menit');
+	assert.equal(date('2025-06-14T15:00:00Z').to.relative(now, 'id'), 'dalam 3 jam');
+	assert.equal(date('2025-06-16T12:00:00Z').to.relative(now, 'id'), 'lusa');
+	assert.equal(date('2025-05-14T12:00:00Z').to.relative(now, 'id'), 'bulan lalu');
+	assert.equal(date('2023-06-14T12:00:00Z').to.relative(now, 'id'), '2 tahun yang lalu');
 });
 
 suites['date/format']('format date', () => {
