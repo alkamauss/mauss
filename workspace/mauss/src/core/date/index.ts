@@ -14,7 +14,7 @@ export function date(input: DateLike = new Date()) {
 		},
 
 		add(amount: number, unit: Unit) {
-			const next = new Date(d.getTime());
+			const next = this.raw;
 			switch (unit) {
 				case 'millisecond':
 					next.setMilliseconds(d.getMilliseconds() + amount);
@@ -46,7 +46,8 @@ export function date(input: DateLike = new Date()) {
 		},
 
 		delta(other: DateLike) {
-			const ms = d.getTime() - new Date(other).getTime();
+			const from = date(other).raw;
+			const ms = d.getTime() - from.getTime();
 			return {
 				get milliseconds() {
 					return ms;
@@ -64,17 +65,20 @@ export function date(input: DateLike = new Date()) {
 					return ms / 86_400_000;
 				},
 				get months() {
-					return ms / 2_629_746_000;
+					const years = d.getFullYear() - from.getFullYear();
+					const months = d.getMonth() - from.getMonth();
+					const adjust = d.getDate() < from.getDate() ? -1 : 0;
+					return years * 12 + months + adjust;
 				},
 				get years() {
-					return ms / 31_556_952_000;
+					return this.months / 12;
 				},
 			};
 		},
 
 		is: {
 			get today() {
-				const now = new Date();
+				const now = date().raw;
 				return (
 					d.getFullYear() === now.getFullYear() &&
 					d.getMonth() === now.getMonth() &&
@@ -124,8 +128,8 @@ export function date(input: DateLike = new Date()) {
 		},
 
 		to: {
-			relative(base = new Date()) {
-				const delta = d.getTime() - base.getTime();
+			relative(base: DateLike = new Date()) {
+				const delta = d.getTime() - date(base).raw.getTime();
 				const abs = Math.abs(delta);
 				const units = [
 					['year', 31_556_952_000],
