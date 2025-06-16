@@ -1,14 +1,14 @@
 {
 	"compilerOptions": {
 		// Project Options
-		"target": "ES2017",
-		"module": "Node16",
+		"target": "es2020",
+		"module": "nodenext",
 		"noEmit": true,
 		"checkJs": true,
 		"isolatedModules": true,
 
 		// Module Resolution
-		"moduleResolution": "Node16",
+		"moduleResolution": "nodenext",
 		"resolveJsonModule": true,
 
 		// Linter Checks
@@ -19,10 +19,6 @@
 
 		// Advanced
 		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-
-		// Experimental
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true
+		"forceConsistentCasingInFileNames": true
 	}
 }
