@@ -8,7 +8,9 @@
 	"type": "module",
 	"scripts": {
 		"check": "pnpm build:files",
-		"test": "uvu -r tsm src \"(spec\\.ts)\"",
+		"test": "pnpm run \"/^test:.*/\"",
+		"test:unit": "uvu -r tsm src \"(spec\\.ts)\"",
+		"test:types": "tsc -p src/tsconfig.test.json",
 		"build:types": "tsm scripts/compile-types.ts",
 		"build:files": "tsc --project src",
 		"prepublishOnly": "pnpm run \"/^build:.*/\""

@@ -6,6 +6,6 @@ export function scope<T>(fn: () => T) {
 export { attempt } from './attempt/index.js';
 export { date } from './date/index.js';
 export { curry, pipe } from './lambda/index.js';
-export { debounce, immediate, throttle } from './processor/index.js';
+export { immediate, throttle } from './processor/index.js';
 export { capitalize, identical, indent, inverse, regexp, sides, unique } from './standard/index.js';
 export { catenate, tsf } from './string/index.js';
