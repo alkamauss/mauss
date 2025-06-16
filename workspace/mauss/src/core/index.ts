@@ -3,7 +3,8 @@ export function scope<T>(fn: () => T) {
 	return fn();
 }
 
-export { attempt, curry, pipe } from './lambda/index.js';
+export { attempt } from './attempt/index.js';
+export { curry, pipe } from './lambda/index.js';
 export { immediate, throttle } from './processor/index.js';
 export { capitalize, identical, indent, inverse, regexp, sides, unique } from './standard/index.js';
-export { tsf } from './string/index.js';
+export { catenate, tsf } from './string/index.js';
