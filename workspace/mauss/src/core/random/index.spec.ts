@@ -1,4 +1,3 @@
-import { webcrypto as crypto } from 'node:crypto';
 import { suite } from 'uvu';
 import * as assert from 'uvu/assert';
 import { random } from './index.js';
