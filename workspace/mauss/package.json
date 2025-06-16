@@ -1,14 +1,16 @@
 {
 	"name": "mauss",
 	"version": "0.9.2",
-	"description": "lightweight, modular, type-safe utilities",
+	"description": "the essential utility belt — modular, type-safe, and dependency-free",
 	"repository": "github:alkamauss/mauss",
 	"author": "Ignatius Bagus",
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
 		"check": "pnpm build:files",
-		"test": "uvu -r tsm src \"(spec\\.ts)\"",
+		"test": "pnpm run \"/^test:.*/\"",
+		"test:unit": "uvu -r tsm src \"(spec\\.ts)\"",
+		"test:types": "tsc -p src/tsconfig.test.json",
 		"build:types": "tsm scripts/compile-types.ts",
 		"build:files": "tsc --project src",
 		"prepublishOnly": "pnpm run \"/^build:.*/\""
@@ -78,17 +80,16 @@
 		"tsconfig.json"
 	],
 	"keywords": [
-		"lightweight",
+		"config",
+		"utility",
 		"modular",
 		"type-safe",
-		"utility",
-		"zero-dependency",
-		"tree-shakable",
-		"strongly-typed",
-		"efficient",
 		"functional",
+		"lightweight",
+		"tree-shakable",
+		"zero-dependencies",
 		"declarative",
-		"opinionated",
-		"settings"
+		"typescript",
+		"opinionated"
 	]
 }
