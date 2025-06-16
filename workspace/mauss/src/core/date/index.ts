@@ -224,7 +224,7 @@ export function date(input: DateLike = new Date()) {
 				const EXP = /D{1,4}|M{1,4}|YY(?:YY)?|([hHmsAPap])\1?|Z{1,3}|\[([^\]\[]|\[[^\[\]]*\])*\]/g;
 				return mask.replace(EXP, ($) => {
 					const exe = tokens[$ as keyof typeof tokens];
-					return `${exe}` || $.slice(1, $.length - 1);
+					return `${exe || ''}` || $.slice(1, $.length - 1);
 				});
 			};
 		},
