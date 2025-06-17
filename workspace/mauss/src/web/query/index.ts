@@ -1,28 +1,4 @@
 import type { IndexSignature, Nullish, Primitives } from '../../typings/aliases.js';
-import type { AlsoArray } from '../../typings/extenders.js';
-import type { Intersection } from '../../typings/helpers.js';
-import type { Flatten } from '../../typings/prototypes.js';
-
-type CombineExisting<
-	A extends Record<IndexSignature, any>,
-	B extends Record<IndexSignature, any>,
-	Duplicate = Intersection<A, B>,
-> = Omit<A, keyof Duplicate> &
-	Omit<B, keyof Duplicate> & {
-		[P in keyof Duplicate]: Flatten<[A[P], B[P]]>;
-	};
-
-type QueryDecoder<Query extends string> = string extends Query
-	? Record<IndexSignature, string | readonly string[]>
-	: Query extends `${infer Leading}${infer Rest}`
-		? Leading extends '?'
-			? QueryDecoder<Rest>
-			: `${Leading}${Rest}` extends `${infer Param}&${infer Next}`
-				? CombineExisting<QueryDecoder<Param>, QueryDecoder<Next>>
-				: `${Leading}${Rest}` extends `${infer Key}=${infer Value}`
-					? { [K in Key]: Value }
-					: {}
-		: {};
 
 /**
  * Query string decoder (`qsd`) decodes a query string into an object. It accepts a query string with or without the leading `?` and returns a mapped object of decoded query string
@@ -30,28 +6,25 @@ type QueryDecoder<Query extends string> = string extends Query
  * @param qs query string of a URL with or without the leading `?`
  * @returns mapped object of decoded query string
  */
-export function qsd<Q extends string>(qs: Q) {
-	if (qs[0] === '?') qs = qs.slice(1) as Q;
-	if (!qs) return {} as QueryDecoder<Q>;
+export function qsd(qs: string): Record<IndexSignature, undefined | Primitives[]> {
+	if (!qs) return {};
+	if (qs[0] === '?') qs = qs.slice(1);
 
 	const dec = (s: string) => {
 		if (!s.trim()) return '';
-		s = decodeURIComponent(s);
+		s = decodeURIComponent(s.trim());
 		if (['true', 'false'].includes(s)) return s[0] === 't';
 		return Number.isNaN(Number(s)) ? s : Number(s);
 	};
 
-	const dqs: Record<IndexSignature, AlsoArray<Primitives>> = {};
-	const qar = qs.split('&');
-	for (let i = 0; i < qar.length; i++) {
-		const [k, v] = qar[i].split('=');
-		if (v === undefined) continue;
-		const item = dqs[k]; // satisfy TS
-		if (!dqs[k] && (dqs[k] = dec(v))) continue;
-		if (!Array.isArray(item)) dqs[k] = [item];
-		(dqs[k] as Primitives[]).push(dec(v));
+	const out: Record<string, Primitives[]> = {};
+	const params = new URLSearchParams(qs);
+	for (const [k, v] of params.entries()) {
+		const cast = dec(v);
+		if (!out[k]) out[k] = [cast];
+		else out[k].push(cast);
 	}
-	return dqs as QueryDecoder<Q>;
+	return out;
 }
 
 type BoundValues = Nullish | Primitives;

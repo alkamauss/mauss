@@ -4,23 +4,56 @@ import * as assert from 'uvu/assert';
 import { qsd, qse } from './index.js';
 
 const suites = {
-	'decoder/': suite('query/decoder'),
-	'encoder/': suite('query/encoder'),
+	'qs/decoder': suite('query/decoder'),
+	'qs/encoder': suite('query/encoder'),
 };
 
-suites['decoder/']('decode query string to object', () => {
+suites['qs/decoder']('decode empty query string', () => {
+	assert.equal(qsd(''), {});
+	assert.equal(qsd('?'), {});
+});
+suites['qs/decoder']('decode query string to object', () => {
 	const pairs = [
-		['?hi=mom&hello=world', { hi: 'mom', hello: 'world' }],
+		['?hi=mom&hello=world', { hi: ['mom'], hello: ['world'] }],
 		['fam=mom&fam=dad&fam=sis', { fam: ['mom', 'dad', 'sis'] }],
-		['dynamic=value' as string, { dynamic: 'value' }],
+		['fam&fam=dad&fam=mom', { fam: ['', 'dad', 'mom'] }],
+		['mom&dad&sis', { mom: [''], dad: [''], sis: [''] }],
+		['dynamic=value' as string, { dynamic: ['value'] }],
 	] as const;
 
 	for (const [input, output] of pairs) {
 		assert.equal(qsd(input), output);
 	}
 });
+suites['qs/decoder']('decode query string with encoded values', () => {
+	const pairs = [
+		['?escape=spa%20zio!', { escape: ['spa zio!'] }],
+		['?brackets=%5Bdynamic%5D', { brackets: ['[dynamic]'] }],
+		['?%5Bbrackets%5D=boo', { '[brackets]': ['boo'] }],
+	] as const;
 
-suites['encoder/']('encode object to query string', () => {
+	for (const [input, output] of pairs) {
+		assert.equal(qsd(input), output);
+	}
+});
+suites['qs/decoder']('decode query string with boolean and numeric values', () => {
+	const pairs = [
+		['?bool=true', { bool: [true] }],
+		['?bool=false', { bool: [false] }],
+		['?num=123', { num: [123] }],
+		['?num=0', { num: [0] }],
+		['?num=NaN', { num: ['NaN'] }],
+	] as const;
+
+	for (const [input, output] of pairs) {
+		assert.equal(qsd(input), output);
+	}
+});
+suites['qs/decoder']('decode edge cases', () => {
+	assert.equal(qsd('?=empty'), { '': ['empty'] });
+});
+
+suites['qs/encoder']('encode object to query string', () => {
 	let payload: string = 'dynamic';
 	const pairs = [
 		[{ hi: 'mom', hello: 'world' }, '?hi=mom&hello=world'],
@@ -35,7 +68,7 @@ suites['encoder/']('encode object to query string', () => {
 		assert.equal(qse(input), output);
 	}
 });
-suites['encoder/']('transform final string if it exists', () => {
+suites['qs/encoder']('transform final string if it exists', () => {
 	const bound = { q: '' };
 
 	assert.equal(qse(bound), '');
