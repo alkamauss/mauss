@@ -1,5 +1,4 @@
 {
 	"extends": "../tsconfig.json",
-	"include": ["**/*.spec.ts", "**/*.test.ts"],
-	"compilerOptions": { "target": "es2020" }
+	"include": ["**/*.spec.ts", "**/*.test.ts"]
 }
