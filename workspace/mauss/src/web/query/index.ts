@@ -6,24 +6,25 @@ import type { IndexSignature, Nullish, Primitives } from '../../typings/aliases.
  * @param qs query string of a URL with or without the leading `?`
  * @returns mapped object of decoded query string
  */
-export function qsd(qs: string): Record<IndexSignature, undefined | Primitives[]> {
-	if (qs[0] === '?') qs = qs.slice(1);
+export function qsd(qs: string): Record<IndexSignature, Primitives[]> {
 	if (!qs) return {};
+	if (qs[0] === '?') qs = qs.slice(1);
 
 	const dec = (s: string) => {
 		if (!s.trim()) return '';
-		s = decodeURIComponent(s);
+		s = decodeURIComponent(s.trim());
 		if (['true', 'false'].includes(s)) return s[0] === 't';
 		return Number.isNaN(Number(s)) ? s : Number(s);
 	};
 
-	const dqs: Record<IndexSignature, Primitives[]> = {};
-	for (const qar of qs.split('&')) {
-		const [k, v = ''] = qar.split('=');
-		if (!dqs[k]) dqs[k] = [dec(v)];
-		else dqs[k].push(dec(v));
+	const out: Record<string, Primitives[]> = {};
+	const params = new URLSearchParams(qs);
+	for (const [k, v] of params.entries()) {
+		const cast = dec(v);
+		if (!out[k]) out[k] = [cast];
+		else out[k].push(cast);
 	}
-	return dqs;
+	return out;
 }
 
 type BoundValues = Nullish | Primitives;
