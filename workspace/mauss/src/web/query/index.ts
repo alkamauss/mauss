@@ -6,7 +6,7 @@ import type { IndexSignature, Nullish, Primitives } from '../../typings/aliases.
  * @param qs query string of a URL with or without the leading `?`
  * @returns mapped object of decoded query string
  */
-export function qsd(qs: string): Record<IndexSignature, Primitives[]> {
+export function qsd(qs: string): Record<IndexSignature, undefined | Primitives[]> {
 	if (!qs) return {};
 	if (qs[0] === '?') qs = qs.slice(1);
 
