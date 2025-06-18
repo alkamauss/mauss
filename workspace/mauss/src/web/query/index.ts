@@ -40,26 +40,23 @@ export function qse<T extends object>(
 	bound: T[keyof T] extends BoundValues | readonly BoundValues[] ? T : never,
 	transformer = (final: string) => `?${final}`,
 ): string {
-	const enc = encodeURIComponent;
+	const params = new URLSearchParams();
 
-	let final = '';
-	for (let [k, v] of Object.entries(bound)) {
-		if (v == null || (typeof v === 'string' && !(v = v.trim()))) continue;
-		if ((k = enc(k)) && final) final += '&';
-
-		if (Array.isArray(v)) {
-			let pointer = 0;
-			while (pointer < v.length) {
-				if (pointer) final += '&';
-				const item = v[pointer++];
-				if (item == null) continue;
-				final += `${k}=${enc(item)}`;
+	for (let [k, raw] of Object.entries(bound)) {
+		if (raw == null) continue;
+		if (Array.isArray(raw)) {
+			for (const v of raw) {
+				if (v == null) continue;
+				const str = String(v).trim();
+				if (str) params.append(k, str);
 			}
 			continue;
 		}
 
-		final += `${k}=${enc(v as Primitives)}`;
+		const str = String(raw).trim();
+		if (str) params.set(k, str);
 	}
 
+	const final = params.toString();
 	return final ? transformer(final) : final;
 }
