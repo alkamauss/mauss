@@ -1,4 +1,4 @@
-import type { AnyFunction, UnaryFunction } from '../../typings/helpers.js';
+import type { AnyFunction, Reverse, UnaryFunction } from '../../typings/helpers.js';
 import type { Progressive, Slice } from '../../typings/prototypes.js';
 
 type Currying<Fun extends AnyFunction> = <Arguments extends Progressive<Parameters<Fun>>>(
@@ -19,6 +19,18 @@ export function curry<F extends AnyFunction>(fn: F, expected = fn.length): Curry
 		if (args.length > expected) return fn(...args.slice(0, expected));
 		return curry((...next) => fn(...[...args, ...next]), expected - args.length);
 	};
+}
+
+/**
+ * A function that accepts a function and returns the same function with the order of parameters reversed. This can be used in conjunction with `compare` methods to sort the items in ascending values.
+ *
+ * @param fn any function with one or more arguments
+ * @returns a curried function to take in the arguments
+ */
+export function inverse<Function extends AnyFunction>(fn: Function) {
+	type Reversed = Reverse<Parameters<Function>>;
+	type Returned = ReturnType<Function>;
+	return (...parameters: Reversed): Returned => fn(...parameters.reverse());
 }
 
 type Validator<
