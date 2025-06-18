@@ -3,14 +3,11 @@ import type { AnyFunction } from '../../typings/helpers.js';
 const DURATION = 300;
 
 /**
- * Immediately execute `fn` and prevent the next execution until after `time`
+ * Immediately execute `fn` and block subsequent calls for `time` ms
  *
  * @example
- *
  * ```js
- * function update(name) {...}
- *
- * const onclick = immediate(update, 500);
+ * onclick = () => immediate(() => {...}, 500);
  * ```
  */
 export function immediate<F extends AnyFunction>(fn: F, time = DURATION) {
@@ -23,16 +20,13 @@ export function immediate<F extends AnyFunction>(fn: F, time = DURATION) {
 }
 
 /**
- * Prevent executions after the first `fn` until `time` has passed
+ * Allow `fn` to be called at most once every `time` ms
  *
  * @example
- *
  * ```js
- * function update(name) {...}
+ * const search = throttle((query) => {...}, 500);
  *
- * const search = throttle(update, 500);
- *
- * search('mauss'); // execute every 500ms
+ * onclick = () => search('mauss'); // execute every 500ms
  * ```
  */
 export function throttle<F extends AnyFunction>(fn: F, time = DURATION) {
