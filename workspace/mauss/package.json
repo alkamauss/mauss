@@ -41,10 +41,6 @@
 			"types": "./index.d.ts",
 			"default": "./src/promises/index.js"
 		},
-		"./std": {
-			"types": "./index.d.ts",
-			"default": "./src/std/index.js"
-		},
 		"./web": {
 			"types": "./index.d.ts",
 			"default": "./src/web/index.js"
