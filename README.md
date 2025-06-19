@@ -1,16 +1,14 @@
 # mauss
 
-> a lightweight and modular utility library for writing declarative, type-safe code
+> practical functions and reusable configurations
 
-A focused set of modular, type-safe functions for writing compact declarative code.
-
-## Installation
+A lightweight and modular utility library for writing declarative, type-safe code
 
 ```bash
 pnpm add mauss
 ```
 
-### Why?
+## Why?
 
 The best of both worlds
 
@@ -27,7 +25,7 @@ With `mauss`, you can write shorter, simpler, more declarative code without the 
 
 ## Usage
 
-`mauss` is modular, tree-shakeable, and comes with no dependencies — its footprint is so small, it's basically free. Let's start with some convenience exports to quickly get you started with any projects, such as:
+`mauss` is modular, tree-shakeable, and comes with no dependencies — import only what you need, let your bundler do the rest. Let's start with some convenience exports to quickly get you started with any projects, such as:
 
 <!-- use `size-limit` to show the minimal footprint -->
 

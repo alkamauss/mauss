@@ -1,7 +1,7 @@
 {
 	"name": "mauss",
 	"version": "0.9.2",
-	"description": "the essential utility belt — modular, type-safe, and dependency-free",
+	"description": "practical functions and reusable configurations",
 	"repository": "github:alkamauss/mauss",
 	"author": "Ignatius Bagus",
 	"license": "MIT",
@@ -24,10 +24,6 @@
 		"./api": {
 			"types": "./index.d.ts",
 			"default": "./src/api/index.js"
-		},
-		"./compare": {
-			"types": "./index.d.ts",
-			"default": "./src/compare/index.js"
 		},
 		"./csv": {
 			"types": "./index.d.ts",
