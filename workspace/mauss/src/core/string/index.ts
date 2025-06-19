@@ -1,5 +1,20 @@
 import { UnaryFunction } from '../../typings/helpers.js';
 
+interface CapitalizeOptions {
+	/** only capitalize the very first letter */
+	cap?: boolean;
+	/** convert the remaining word to lowercase */
+	normalize?: boolean;
+}
+/**
+ * A function that accepts a string and returns the same with the first letter of each word capitalized. This can also be used to capitalize only the first letter of the entire string, or normalize the entire string to lowercase before capitalizing.
+ */
+export function capitalize(text: string, { cap, normalize }: CapitalizeOptions = {}): string {
+	if (normalize) text = text.toLowerCase();
+	if (cap) return `${text[0].toUpperCase()}${text.slice(1)}`;
+	return text.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
+}
+
 /** Joins all given parameters together using `/`, regardless of the platform */
 export function catenate(...paths: string[]): string {
 	if (!paths.length) return '.';

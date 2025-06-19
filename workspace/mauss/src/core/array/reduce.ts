@@ -41,6 +41,14 @@ export function minmax(array: number[]): [min: number, max: number] {
 	return [min, max];
 }
 
+/**
+ * A function that accepts an indexable object.
+ * @returns `{ head, last }` of the object
+ */
+export function sides<T extends string | any[]>(x: T): Record<'head' | 'last', T[0]> {
+	return { head: x[0], last: x[x.length - 1] };
+}
+
 export function sum(array: number[]): number {
 	let total = 0;
 	for (let i = 0; i < array.length; i++) {
