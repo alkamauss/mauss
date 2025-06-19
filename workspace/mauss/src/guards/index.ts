@@ -6,8 +6,6 @@ import type { Nullish, Falsy, FullPrimitives as Primitives } from '../typings/al
  * @example
  *
  * ```typescript
- * import { bulwark } from 'mauss/guards';
- *
  * let key = 'a' as 'a' | 'z';
  * switch (key) {
  * 	case 'a':

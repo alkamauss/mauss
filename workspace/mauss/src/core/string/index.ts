@@ -46,8 +46,6 @@ type Parse<T> = T extends `${string}{${infer P}}${infer R}` ? P | Parse<R> : nev
  * @example
  *
  * ```javascript
- * import { tsf } from 'mauss/std';
- *
  * const render = tsf('https://api.example.com/v1/{category}/{id}');
  *
  * function publish({ category, id }) {
