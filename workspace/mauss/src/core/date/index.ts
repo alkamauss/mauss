@@ -13,14 +13,16 @@ export function date(input: DateLike = new Date()) {
 	if (Number.isNaN(d.getTime())) throw new Error(`Invalid date: ${input}`);
 
 	return {
-		/** Returns a fresh copy of the native `Date` representing the internal timestamp */
-		get raw() {
-			return new Date(d.getTime());
-		},
 		/** Returns a new `date()` instance with the same timestamp */
 		clone() {
 			return date(d);
 		},
+		/** Returns a fresh copy of the native `Date` representing the internal timestamp */
+		get raw() {
+			return new Date(d.getTime());
+		},
+		/** Returns the internal timestamp in milliseconds */
+		epoch: d.getTime(),
 
 		/** Returns a new `date()` instance with the specified time added */
 		add(amount: number, unit: Unit) {
@@ -275,3 +277,12 @@ export function date(input: DateLike = new Date()) {
 		},
 	};
 }
+
+date.sort = {
+	oldest(x: DateLike, y: DateLike) {
+		return date(x).epoch - date(y).epoch;
+	},
+	newest(x: DateLike, y: DateLike) {
+		return date(y).epoch - date(x).epoch;
+	},
+};
