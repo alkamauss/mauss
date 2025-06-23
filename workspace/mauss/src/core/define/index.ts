@@ -1,4 +1,4 @@
-import * as error from './error.js';
+import { InputError } from './error.js';
 import * as rules from './rules.js';
 
 type Validator<T = unknown> = (input: unknown) => T;
@@ -7,7 +7,7 @@ interface Schema {
 }
 function check(input: Record<string, unknown>, schema: Schema) {
 	if (typeof input !== 'object' || input == null) {
-		throw new error.InputError('object', input);
+		throw new InputError('object', input);
 	}
 	for (const key in schema) {
 		if (typeof schema[key] === 'object') {
@@ -27,7 +27,3 @@ export function define<T>(builder: (r: typeof rules) => T) {
 		return check(input as any, schema) as I<T>;
 	};
 }
-
-// attach the helpers
-define.error = error;
-define.rules = rules;

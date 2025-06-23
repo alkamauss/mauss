@@ -94,3 +94,29 @@ describe('schema', ({ concurrent: it }) => {
 		expect(() => schema(null)).toThrow();
 	});
 });
+
+describe('errors', ({ concurrent: it }) => {
+	it('error types', ({ expect }) => {
+		expect(() => define(({ literal }) => literal())('')).toThrowError(
+			expect.objectContaining({ name: 'SchemaError' }),
+		);
+
+		expect(() => define(({ string }) => string())(123)).toThrowError(
+			expect.objectContaining({ name: 'InputError' }),
+		);
+
+		expect(() => define(({ number }) => number())(NaN)).toThrowError(
+			expect.objectContaining({ name: 'InvalidInput' }),
+		);
+	});
+
+	it('input error', ({ expect }) => {
+		const schema = define(({ string }) => string());
+
+		expect(() => schema(123)).toThrow('Unexpected input for string: Received "number" (123)');
+		expect(() => schema(null)).toThrow('Unexpected input for string: Received "object" (null)');
+		expect(() => schema(undefined)).toThrow(
+			'Unexpected input for string: Received "undefined" (undefined)',
+		);
+	});
+});
