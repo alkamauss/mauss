@@ -1,5 +1,4 @@
-import { suite } from 'uvu';
-import * as assert from 'uvu/assert';
+import { describe } from 'vitest';
 import * as guards from './index.js';
 
 // checked based on https://developer.mozilla.org/en-US/docs/Glossary/Falsy
@@ -7,69 +6,66 @@ const data = [true, false, 'a', 'b', 0, 1, 2, '', null, undefined, NaN];
 const numbers = [-2, -1, 0, 1, 2, 3];
 const strings = ['a', 'A', 'b', 'B', 'c', 'C'];
 
-const suites = {
-	'guards/': suite('guards/core'),
-	'inverse/': suite('guards/not'),
-};
+describe('guards', ({ concurrent: it }) => {
+	it('filters values that exists', ({ expect }) => {
+		const filtered = data.filter(guards.exists);
+		expect(filtered).toEqual([true, false, 'a', 'b', 0, 1, 2, NaN]);
+	});
 
-suites['guards/']('filters values that exists', () => {
-	const filtered = data.filter(guards.exists);
-	assert.equal(filtered, [true, false, 'a', 'b', 0, 1, 2, NaN]);
+	it('filters values that are nullish', ({ expect }) => {
+		const filtered = data.filter(guards.nullish);
+		expect(filtered).toEqual([null, undefined]);
+	});
+
+	it('filters values that are truthy', ({ expect }) => {
+		const filtered = data.filter(guards.truthy);
+		expect(filtered).toEqual([true, 'a', 'b', 1, 2]);
+	});
+
+	it('filters numbers that are natural', ({ expect }) => {
+		const filtered = numbers.filter(guards.natural);
+		expect(filtered).toEqual([1, 2, 3]);
+	});
+
+	it('filters numbers that are whole', ({ expect }) => {
+		const filtered = numbers.filter(guards.whole);
+		expect(filtered).toEqual([0, 1, 2, 3]);
+	});
+
+	it('filters strings that are lowercase', ({ expect }) => {
+		const filtered = strings.filter(guards.lowercase);
+		expect(filtered).toEqual(['a', 'b', 'c']);
+	});
+
+	it('filters strings that are uppercase', ({ expect }) => {
+		const filtered = strings.filter(guards.uppercase);
+		expect(filtered).toEqual(['A', 'B', 'C']);
+	});
 });
 
-suites['guards/']('filters values that are nullish', () => {
-	const filtered = data.filter(guards.nullish);
-	assert.equal(filtered, [null, undefined]);
-});
+describe('inverse', ({ concurrent: it }) => {
+	it('filters values that does not exists', ({ expect }) => {
+		const filtered = data.filter(guards.not(guards.exists));
+		expect(filtered).toEqual(['', null, undefined]);
+	});
 
-suites['guards/']('filters values that are truthy', () => {
-	const filtered = data.filter(guards.truthy);
-	assert.equal(filtered, [true, 'a', 'b', 1, 2]);
-});
+	it('filters values that are not nullish', ({ expect }) => {
+		const filtered = data.filter(guards.not(guards.nullish));
+		expect(filtered).toEqual([true, false, 'a', 'b', 0, 1, 2, '', NaN]);
+	});
 
-suites['guards/']('filters numbers that are natural', () => {
-	const filtered = numbers.filter(guards.natural);
-	assert.equal(filtered, [1, 2, 3]);
-});
+	it('filters values that are falsy', ({ expect }) => {
+		const filtered = data.filter(guards.not(guards.truthy));
+		expect(filtered).toEqual([false, 0, '', null, undefined, NaN]);
+	});
 
-suites['guards/']('filters numbers that are whole', () => {
-	const filtered = numbers.filter(guards.whole);
-	assert.equal(filtered, [0, 1, 2, 3]);
-});
+	it('filters numbers that are not natural', ({ expect }) => {
+		const filtered = numbers.filter(guards.not(guards.natural));
+		expect(filtered).toEqual([-2, -1, 0]);
+	});
 
-suites['guards/']('filters strings that are lowercase', () => {
-	const filtered = strings.filter(guards.lowercase);
-	assert.equal(filtered, ['a', 'b', 'c']);
+	it('filters numbers that are not whole', ({ expect }) => {
+		const filtered = numbers.filter(guards.not(guards.whole));
+		expect(filtered).toEqual([-2, -1]);
+	});
 });
-
-suites['guards/']('filters strings that are uppercase', () => {
-	const filtered = strings.filter(guards.uppercase);
-	assert.equal(filtered, ['A', 'B', 'C']);
-});
-
-suites['inverse/']('filters values that does not exists', () => {
-	const filtered = data.filter(guards.not(guards.exists));
-	assert.equal(filtered, ['', null, undefined]);
-});
-
-suites['inverse/']('filters values that are not nullish', () => {
-	const filtered = data.filter(guards.not(guards.nullish));
-	assert.equal(filtered, [true, false, 'a', 'b', 0, 1, 2, '', NaN]);
-});
-
-suites['inverse/']('filters values that are falsy', () => {
-	const filtered = data.filter(guards.not(guards.truthy));
-	assert.equal(filtered, [false, 0, '', null, undefined, NaN]);
-});
-
-suites['inverse/']('filters numbers that are not natural', () => {
-	const filtered = numbers.filter(guards.not(guards.natural));
-	assert.equal(filtered, [-2, -1, 0]);
-});
-
-suites['inverse/']('filters numbers that are not whole', () => {
-	const filtered = numbers.filter(guards.not(guards.whole));
-	assert.equal(filtered, [-2, -1]);
-});
-
-Object.values(suites).forEach((v) => v.run());

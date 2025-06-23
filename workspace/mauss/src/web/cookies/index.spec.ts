@@ -1,109 +1,120 @@
-import { suite } from 'uvu';
-import * as assert from 'uvu/assert';
+import { describe } from 'vitest';
 import { cookies } from './index.js';
 
-const suites = {
-	'parse/': suite('cookie/parse'),
-	'create/': suite('cookie/create'),
-	'remove/': suite('cookie/remove'),
-	'bulk/': suite('cookie/bulk'),
-	'raw/': suite('cookie/raw'),
-};
+describe('parse', ({ concurrent: it }) => {
+	it('should parse cookies', ({ expect }) => {
+		const jar = cookies.parse('foo=bar;hi=mom;hello=world');
+		expect(jar.get('foo')).toBe('bar');
+		expect(jar.get('hi')).toBe('mom');
+		expect(jar.get('hello')).toBe('world');
+	});
 
-suites['parse/']('parse basic input', () => {
-	const jar = cookies.parse('foo=bar;hi=mom;hello=world');
-	assert.equal(jar.get('foo'), 'bar');
-	assert.equal(jar.get('hi'), 'mom');
-	assert.equal(jar.get('hello'), 'world');
-});
-suites['parse/']('parse nullish header', () => {
-	let header: null | undefined = null;
-	const jar = cookies.parse(header);
-	assert.ok(!jar.has('foo'));
-	assert.ok(!jar.has('hi'));
-	assert.ok(!jar.has('hello'));
-	assert.equal(jar.get('foo'), undefined);
-	assert.equal(jar.get('hi'), undefined);
-	assert.equal(jar.get('hello'), undefined);
-});
-suites['parse/']('parse ignore spaces', () => {
-	const jar = cookies.parse('foo   = bar;  hi=     mom');
-	assert.equal(jar.get('foo'), 'bar');
-	assert.equal(jar.get('hi'), 'mom');
-});
-suites['parse/']('parse handle quoted', () => {
-	const jar = cookies.parse('foo="bar=123&hi=mom"');
-	assert.equal(jar.get('foo'), 'bar=123&hi=mom');
-});
-suites['parse/']('parse escaped values', () => {
-	const jar = cookies.parse('foo=%20%22%2c%2f%3b');
-	assert.equal(jar.get('foo'), ' ",/;');
-});
-suites['parse/']('parse ignore errors', () => {
-	const jar = cookies.parse('foo=%1;bar=baz;huh;');
-	assert.equal(jar.get('foo'), '%1');
-	assert.equal(jar.get('bar'), 'baz');
-	assert.ok(!jar.has('huh'));
-});
-suites['parse/']('parse ignore missing values', () => {
-	const jar = cookies.parse('foo=;bar= ;huh');
-	assert.ok(!jar.has('foo'));
-	assert.ok(!jar.has('bar'));
-	assert.ok(!jar.has('huh'));
-});
+	it('should handle nullish headers', ({ expect }) => {
+		let header: null | undefined = null;
+		const jar = cookies.parse(header);
+		expect(jar.has('foo')).toBe(false);
+		expect(jar.has('hi')).toBe(false);
+		expect(jar.has('hello')).toBe(false);
+		expect(jar.get('foo')).toBeUndefined();
+		expect(jar.get('hi')).toBeUndefined();
+		expect(jar.get('hello')).toBeUndefined();
+	});
 
-suites['create/']('generate Set-Cookie value to set cookie', () => {
-	const value = cookies.create()('foo', 'bar');
-	assert.match(value, /foo=bar; Expires=(.*); Path=\/; SameSite=Lax; HttpOnly/);
-});
-suites['create/']('set Secure attribute for SameSite=None', () => {
-	const printer = cookies.create({ sameSite: 'None' });
-	const value = printer('foo', 'bar');
-	assert.match(value, /foo=bar; Expires=(.*); Path=\/; SameSite=None; HttpOnly; Secure/);
+	it('should ignore spaces in cookies', ({ expect }) => {
+		const jar = cookies.parse('foo   = bar;  hi=     mom');
+		expect(jar.get('foo')).toBe('bar');
+		expect(jar.get('hi')).toBe('mom');
+	});
+
+	it('should handle quoted values', ({ expect }) => {
+		const jar = cookies.parse('foo="bar=123&hi=mom"');
+		expect(jar.get('foo')).toBe('bar=123&hi=mom');
+	});
+
+	it('should handle escaped values', ({ expect }) => {
+		const jar = cookies.parse('foo=%20%22%2c%2f%3b');
+		expect(jar.get('foo')).toBe(' ",/;');
+	});
+
+	it('should ignore errors in parsing', ({ expect }) => {
+		const jar = cookies.parse('foo=%1;bar=baz;huh;');
+		expect(jar.get('foo')).toBe('%1');
+		expect(jar.get('bar')).toBe('baz');
+		expect(jar.has('huh')).toBe(false);
+	});
+
+	it('should ignore missing values', ({ expect }) => {
+		const jar = cookies.parse('foo=;bar= ;huh');
+		expect(jar.has('foo')).toBe(false);
+		expect(jar.has('bar')).toBe(false);
+		expect(jar.has('huh')).toBe(false);
+	});
 });
 
-suites['remove/']('generate Set-Cookie value to remove cookie', () => {
-	const value = cookies.remove('foo');
-	assert.match(value, /foo=; Path=\/; Expires=Thu, 01 Jan 1970 00:00:01 GMT/);
+describe('create', ({ concurrent: it }) => {
+	it('should generate Set-Cookie value', ({ expect }) => {
+		const value = cookies.create()('foo', 'bar');
+		expect(value).toMatch(/foo=bar; Expires=(.*); Path=\/; SameSite=Lax; HttpOnly/);
+	});
+
+	it('should set Secure attribute for SameSite=None', ({ expect }) => {
+		const printer = cookies.create({ sameSite: 'None' });
+		const value = printer('foo', 'bar');
+		expect(value).toMatch(/foo=bar; Expires=(.*); Path=\/; SameSite=None; HttpOnly; Secure/);
+	});
 });
 
-suites['bulk/']('bulk generate Set-Cookie values', () => {
-	const data = { foo: 'bar' };
-	for (const value of cookies.bulk(data)) {
-		assert.match(value, /(.*)=(.*); Expires=(.*); Path=\/; SameSite=Lax; HttpOnly/);
-	}
+describe('remove', ({ concurrent: it }) => {
+	it('should generate Set-Cookie value to remove cookie', ({ expect }) => {
+		const value = cookies.remove('foo');
+		expect(value).toMatch(/foo=; Path=\/; Expires=Thu, 01 Jan 1970 00:00:01 GMT/);
+	});
 });
 
-suites['raw/']('raw basic input', () => {
-	const header = 'foo=bar;hi=mom;hello=world';
-	assert.equal(cookies.raw(header, 'foo'), 'bar');
-	assert.equal(cookies.raw(header, 'hi'), 'mom');
-	assert.equal(cookies.raw(header, 'hello'), 'world');
-});
-suites['raw/']('raw nullish header', () => {
-	let header: null | undefined = null;
-	assert.ok(!cookies.raw(header, 'foo'));
-	assert.ok(!cookies.raw(header, 'hi'));
-	assert.ok(!cookies.raw(header, 'hello'));
-});
-suites['raw/']('raw ignore spaces', () => {
-	const header = 'foo   = bar;  hi=  mom';
-	assert.equal(cookies.raw(header, 'foo'), ' bar');
-	assert.equal(cookies.raw(header, 'hi'), '  mom');
-});
-suites['raw/']('raw handle quoted', () => {
-	const header = 'foo="bar=123&hi=mom"';
-	assert.equal(cookies.raw(header, 'foo'), '"bar=123&hi=mom"');
-});
-suites['raw/']('raw escaped values', () => {
-	const header = 'foo=%20%22%2c%2f%3b';
-	assert.equal(cookies.raw(header, 'foo'), '%20%22%2c%2f%3b');
-});
-suites['raw/']('raw return empty values', () => {
-	const header = 'foo=;bar= ;huh';
-	assert.ok(!cookies.raw(header, 'foo'));
-	assert.ok(cookies.raw(header, 'bar'));
-	assert.ok(!cookies.raw(header, 'huh'));
+describe('bulk', ({ concurrent: it }) => {
+	it('should generate Set-Cookie values for multiple cookies', ({ expect }) => {
+		const data = { foo: 'bar', hi: 'mom', hello: 'world' };
+		for (const value of cookies.bulk(data)) {
+			expect(value).toMatch(/(.*)=(.*); Expires=(.*); Path=\/; SameSite=Lax; HttpOnly/);
+		}
+	});
 });
 
-Object.values(suites).forEach((v) => v.run());
+describe('raw', ({ concurrent: it }) => {
+	it('should parse raw cookie header', ({ expect }) => {
+		const header = 'foo=bar;hi=mom;hello=world';
+		expect(cookies.raw(header, 'foo')).toBe('bar');
+		expect(cookies.raw(header, 'hi')).toBe('mom');
+		expect(cookies.raw(header, 'hello')).toBe('world');
+	});
+
+	it('should handle nullish headers', ({ expect }) => {
+		let header: null | undefined = null;
+		expect(cookies.raw(header, 'foo')).toBeUndefined();
+		expect(cookies.raw(header, 'hi')).toBeUndefined();
+		expect(cookies.raw(header, 'hello')).toBeUndefined();
+	});
+
+	it('should ignore spaces in raw cookies', ({ expect }) => {
+		const header = 'foo   = bar;  hi=  mom';
+		expect(cookies.raw(header, 'foo')).toBe(' bar');
+		expect(cookies.raw(header, 'hi')).toBe('  mom');
+	});
+
+	it('should handle quoted values in raw cookies', ({ expect }) => {
+		const header = 'foo="bar=123&hi=mom"';
+		expect(cookies.raw(header, 'foo')).toBe('"bar=123&hi=mom"');
+	});
+
+	it('should handle escaped values in raw cookies', ({ expect }) => {
+		const header = 'foo=%20%22%2c%2f%3b';
+		expect(cookies.raw(header, 'foo')).toBe('%20%22%2c%2f%3b');
+	});
+
+	it('should return empty values for missing keys', ({ expect }) => {
+		const header = 'foo=;bar= ;huh';
+		expect(cookies.raw(header, 'foo')).toBe('');
+		expect(cookies.raw(header, 'bar')).toBe(' ');
+		expect(cookies.raw(header, 'huh')).toBeUndefined();
+	});
+});
