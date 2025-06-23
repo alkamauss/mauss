@@ -119,4 +119,20 @@ describe('errors', ({ concurrent: it }) => {
 			'Unexpected input for string: Received "undefined" (undefined)',
 		);
 	});
+
+	it('wrap safely', async ({ expect }) => {
+		const { attempt } = await import('../attempt/index.js');
+		const schema = attempt.wrap(define(({ string }) => string()));
+
+		expect(schema).toBeTypeOf('function');
+		expect(schema('test')).toEqual(expect.objectContaining({ data: 'test' }));
+		expect(schema(123)).toEqual(
+			expect.objectContaining({
+				error: expect.objectContaining({
+					name: 'InputError',
+					message: 'Unexpected input for string: Received "number" (123)',
+				}),
+			}),
+		);
+	});
 });
