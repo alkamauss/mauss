@@ -1,79 +1,83 @@
-import { suite } from 'uvu';
-import * as assert from 'uvu/assert';
+import { describe } from 'vitest';
 import { random } from './index.js';
 
-const suites = {
-	'random/float': suite('random/float'),
-	'random/int': suite('random/int'),
-	'random/bool': suite('random/bool'),
-	'random/array': suite('random/array'),
-	'random/key': suite('random/key'),
-	'random/val': suite('random/val'),
-	'random/hex': suite('random/hex'),
-	'random/ipv4': suite('random/ipv4'),
-	'random/uuid': suite('random/uuid'),
-};
-
-suites['random/float']('generate random float', () => {
-	const number = random.float();
-	assert.type(number, 'number');
-	assert.ok(number >= 0 && number < 1);
-});
-suites['random/float']('generate random float with min and max', () => {
-	const number = random.float(1, 2);
-	assert.type(number, 'number');
-	assert.ok(number >= 1 && number < 2);
+describe('float', ({ concurrent: it }) => {
+	it('generate random float', ({ expect }) => {
+		const number = random.float();
+		expect(number).toBeTypeOf('number');
+		expect(number >= 0 && number < 1).toBe(true);
+	});
+	it('generate random float with min and max', ({ expect }) => {
+		const number = random.float(1, 2);
+		expect(number).toBeTypeOf('number');
+		expect(number >= 1 && number < 2).toBe(true);
+	});
 });
 
-suites['random/int']('generate random integer', () => {
-	const number = random.int();
-	assert.type(number, 'number');
-	assert.ok(number === 0 || number === 1);
-});
-suites['random/int']('generate random integer with min and max', () => {
-	const number = random.int(2, 10);
-	assert.type(number, 'number');
-	assert.ok(number >= 2 && number <= 10);
-});
-
-suites['random/bool']('generate random bool', () => {
-	assert.type(random.bool, 'boolean');
+describe('int', ({ concurrent: it }) => {
+	it('generate random integer', ({ expect }) => {
+		const number = random.int();
+		expect(number).toBeTypeOf('number');
+		expect(number === 0 || number === 1).toBe(true);
+	});
+	it('generate random integer with min and max', ({ expect }) => {
+		const number = random.int(2, 10);
+		expect(number).toBeTypeOf('number');
+		expect(number >= 2 && number <= 10).toBe(true);
+	});
 });
 
-suites['random/array']('generate array with random values', () => {
-	const array = random.array(5, 3);
-	assert.type(array, 'object');
-	assert.equal(array.length, 5);
+describe('bool', ({ concurrent: it }) => {
+	it('generate random boolean', ({ expect }) => {
+		const bool = random.bool;
+		expect(bool).toBeTypeOf('boolean');
+	});
 });
 
-suites['random/key']('get random key from object', () => {
-	const key = random.key({ foo: 0, bar: 1 });
-	assert.type(key, 'string');
-	assert.ok(key === 'foo' || key === 'bar');
+describe('array', ({ concurrent: it }) => {
+	it('generate array with random values', ({ expect }) => {
+		const array = random.array(5, 3);
+		expect(array).toBeTypeOf('object');
+		expect(array.length).toBe(5);
+	});
 });
 
-suites['random/val']('get random value from object', () => {
-	const val = random.val({ foo: 0, bar: 1 });
-	assert.type(val, 'number');
-	assert.ok(val === 0 || val === 1);
+describe('key', ({ concurrent: it }) => {
+	it('get random key from object', ({ expect }) => {
+		const key = random.key({ foo: 0, bar: 1 });
+		expect(key).toBeTypeOf('string');
+		expect(key === 'foo' || key === 'bar').toBe(true);
+	});
 });
 
-suites['random/hex']('generate random hex color', () => {
-	const hex = random.hex;
-	assert.type(hex, 'string');
-	assert.match(hex, /^#[0-9a-f]{6}$/);
+describe('val', ({ concurrent: it }) => {
+	it('get random value from object', ({ expect }) => {
+		const val = random.val({ foo: 0, bar: 1 });
+		expect(val).toBeTypeOf('number');
+		expect(val === 0 || val === 1).toBe(true);
+	});
 });
 
-suites['random/ipv4']('generate random ipv4 address', () => {
-	assert.type(random.ipv4, 'string');
-	assert.match(random.ipv4, /^(?!0\.0\.0\.0)(?!255\.255\.255\.255)(\d{1,3}\.){3}\d{1,3}$/);
+describe('hex', ({ concurrent: it }) => {
+	it('generate random hex color', ({ expect }) => {
+		const hex = random.hex;
+		expect(hex).toBeTypeOf('string');
+		expect(hex).toMatch(/^#[0-9a-f]{6}$/);
+	});
 });
 
-suites['random/uuid']('generate random uuid', () => {
-	const uuid = random.uuid();
-	assert.equal(uuid.length, 36);
-	assert.equal(uuid.split('-').length, 5);
-	assert.match(uuid, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+describe('ipv4', ({ concurrent: it }) => {
+	it('generate random ipv4 address', ({ expect }) => {
+		expect(random.ipv4).toBeTypeOf('string');
+		expect(random.ipv4).toMatch(/^(?!0\.0\.0\.0)(?!255\.255\.255\.255)(\d{1,3}\.){3}\d{1,3}$/);
+	});
 });
 
-Object.values(suites).forEach((v) => v.run());
+describe('uuid', ({ concurrent: it }) => {
+	it('generate random uuid', ({ expect }) => {
+		const uuid = random.uuid();
+		expect(uuid.length).toBe(36);
+		expect(uuid.split('-').length).toBe(5);
+		expect(uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+	});
+});
