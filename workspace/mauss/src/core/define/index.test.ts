@@ -1,7 +1,7 @@
 import { define } from './index.js';
 
 declare function expect<T>(v: T): void;
-type V<T> = (input: unknown) => false | T;
+type V<T> = (input: unknown) => T;
 
 (/* define */) => {
 	define((r) => ({
@@ -74,7 +74,6 @@ type V<T> = (input: unknown) => false | T;
 	}));
 
 	const metadata = schema({}); // mocked data
-	if (!metadata) throw expect<false>(metadata);
 	expect<string>(metadata.slug);
 	expect<string>(metadata.category);
 	expect<string>(metadata.date);

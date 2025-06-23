@@ -15,9 +15,12 @@ suites['define/primitives']('string primitive', () => {
 	);
 	assert.equal(define(({ string }) => string())(''), '');
 	assert.equal(define(({ string }) => string())('hello'), 'hello');
-	assert.equal(define(({ string }) => string())(123), false);
-	assert.equal(define(({ string }) => string())(null), false);
-	assert.equal(define(({ string }) => string())(undefined), false);
+	// @ts-expect-error
+	assert.throws(define(({ string }) => string())(123));
+	// @ts-expect-error
+	assert.throws(define(({ string }) => string())(null));
+	// @ts-expect-error
+	assert.throws(define(({ string }) => string())(undefined));
 
 	assert.equal(define(({ string }) => string((v) => v.toUpperCase()))('hello'), 'HELLO');
 	assert.equal(define(({ string }) => string((v) => Number(v)))('123'), 123);
@@ -30,9 +33,13 @@ suites['define/schema']('object schema', () => {
 	);
 	const schema = define(({ string }) => ({ title: string() }));
 	assert.equal(schema({ title: 'Hello' }), { title: 'Hello' });
-	assert.equal(schema({ title: 123 }), false);
-	assert.equal(schema({}), false);
-	assert.equal(schema(null), false);
+
+	// @ts-expect-error
+	assert.throws(schema({ title: 123 }));
+	// @ts-expect-error
+	assert.throws(schema({}));
+	// @ts-expect-error
+	assert.throws(schema(null));
 });
 suites['define/schema']('nested object schema', () => {
 	assert.type(
@@ -41,7 +48,11 @@ suites['define/schema']('nested object schema', () => {
 	);
 	const schema = define(({ string }) => ({ user: { name: string() } }));
 	assert.equal(schema({ user: { name: 'Alice' } }), { user: { name: 'Alice' } });
-	assert.equal(schema({ user: { name: 123 } }), false);
-	assert.equal(schema({}), false);
-	assert.equal(schema(null), false);
+
+	// @ts-expect-error
+	assert.throws(schema({ user: { name: 123 } }));
+	// @ts-expect-error
+	assert.throws(schema({}));
+	// @ts-expect-error
+	assert.throws(schema(null));
 });
