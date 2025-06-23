@@ -1,84 +1,65 @@
-import { suite } from 'uvu';
-import * as assert from 'uvu/assert';
+import { describe } from 'vitest';
 import * as string from './index.js';
 
-const suites = {
-	'string/capitalize': suite('string/capitalize'),
-	'string/catenate': suite('string/catenate'),
-	'string/tsf': suite('string/tsf'),
-};
-
-suites['string/capitalize']('change one letter for one word', () => {
-	assert.equal(string.capitalize('hello'), 'Hello');
-});
-suites['string/capitalize']('change two letter for two words', () => {
-	assert.equal(string.capitalize('hello world'), 'Hello World');
+describe('capitalize', ({ concurrent: it }) => {
+	it('should capitalize the first letter of a string', ({ expect }) => {
+		expect(string.capitalize('hello')).toBe('Hello');
+		expect(string.capitalize('hello world')).toBe('Hello World');
+	});
 });
 
-suites['string/catenate']('joins paths base cases', () => {
-	assert.equal(string.catenate(), '.');
-	assert.equal(string.catenate(''), '.');
-	assert.equal(string.catenate('/'), '/');
-});
-suites['string/catenate']('joins URL-like paths correctly', () => {
-	assert.equal(string.catenate('/', 'root', ':id'), '/root/:id');
-	assert.equal(string.catenate('relative', ':id'), 'relative/:id');
-	assert.equal(string.catenate('/', '/', '/', '/foo/', '/', ':id'), '/foo/:id');
-	assert.equal(string.catenate('', '', '', 'foo', '', ':id'), 'foo/:id');
-});
-suites['string/catenate']('joins file-like paths correctly', () => {
-	assert.equal(string.catenate('/root', './user'), '/root/user');
-	assert.equal(string.catenate('/root/usr/', '..'), '/root');
-	assert.equal(string.catenate('/mnt/srv', './usr/../backup'), '/mnt/srv/backup');
-	assert.equal(string.catenate('../usr', './backup'), '../usr/backup');
+describe('catenate', ({ concurrent: it }) => {
+	it('should join paths correctly', ({ expect }) => {
+		expect(string.catenate()).toBe('.');
+		expect(string.catenate('')).toBe('.');
+		expect(string.catenate('/')).toBe('/');
+
+		expect(string.catenate('/', 'root', ':id')).toBe('/root/:id');
+		expect(string.catenate('relative', ':id')).toBe('relative/:id');
+		expect(string.catenate('/', '/', '/', '/foo/', '/', ':id')).toBe('/foo/:id');
+		expect(string.catenate('', '', '', 'foo', '', ':id')).toBe('foo/:id');
+
+		expect(string.catenate('/root', './user')).toBe('/root/user');
+		expect(string.catenate('/root/usr/', '..')).toBe('/root');
+		expect(string.catenate('/mnt/srv', './usr/../backup')).toBe('/mnt/srv/backup');
+		expect(string.catenate('../usr', './backup')).toBe('../usr/backup');
+	});
 });
 
-suites['string/tsf'].skip('throws on nested braces', () => {
-	assert.throws(() => string.tsf('/{foo/{bar}}' as string));
-	assert.throws(() => string.tsf('/{nested-{}-braces}' as string));
-});
-suites['string/tsf']('parses template without braces', () => {
-	assert.equal(string.tsf('')({}), '');
-	assert.equal(string.tsf('/')({}), '/');
-	assert.equal(string.tsf('/foo')({}), '/foo');
-});
-suites['string/tsf']('parses template correctly', () => {
-	const r1 = string.tsf('/{foo}/{bar}');
+describe('tsf', ({ concurrent: it }) => {
+	it.skip('should throw on invalid template', ({ expect }) => {
+		expect(() => string.tsf('/{foo/{bar}}' as string)).toThrow();
+		expect(() => string.tsf('/{nested-{}-braces}' as string)).toThrow();
+	});
 
-	assert.equal(
-		r1({
-			foo: 'hello',
-			bar: 'world',
-		}),
-		'/hello/world',
-	);
-	assert.equal(
-		r1({
-			foo: (v) => v,
-			bar: (v) => v,
-		}),
-		'/foo/bar',
-	);
-	assert.equal(
-		r1({
-			foo: (v) => [...v].reverse().join(''),
-			bar: (v) => [...v].reverse().join(''),
-		}),
-		'/oof/rab',
-	);
-});
-suites['string/tsf']('parses template with optional parameters', () => {
-	const r = string.tsf('/{v}/api/users{?qs}');
-	assert.equal(r({ v: 'v1' }), '/v1/api/users');
-	assert.equal(r({ v: 'v1', '?qs': '?foo=bar' }), '/v1/api/users?foo=bar');
-	assert.equal(r({ v: 'v1', '?qs': (v) => !v && `?${v}` }), '/v1/api/users');
-});
-suites['string/tsf'].skip('parses template with nested braces', () => {
-	const r1 = string.tsf('/{foo/{bar}}' as string);
-	assert.equal(r1({ 'foo/{bar}': (v) => v }), '/foo/{bar}');
+	it('should parse template without braces', ({ expect }) => {
+		const r = string.tsf('');
+		expect(r({})).toBe('');
+		expect(r({ path: 'foo' })).toBe('');
+	});
 
-	const r2 = string.tsf('/{nested-{}-braces}' as string);
-	assert.equal(r2({ 'nested-{}-braces': (v) => v }), '/nested-{}-braces');
-});
+	it('should parse template correctly', ({ expect }) => {
+		const r1 = string.tsf('/{foo}/{bar}');
 
-Object.values(suites).forEach((v) => v.run());
+		expect(r1({ foo: 'hello', bar: 'world' })).toBe('/hello/world');
+		expect(r1({ foo: (v) => v, bar: (v) => v })).toBe('/foo/bar');
+		expect(
+			r1({ foo: (v) => [...v].reverse().join(''), bar: (v) => [...v].reverse().join('') }),
+		).toBe('/oof/rab');
+	});
+
+	it('should parse template with optional parameters', ({ expect }) => {
+		const r = string.tsf('/{v}/api/users{?qs}');
+		expect(r({ v: 'v1' })).toBe('/v1/api/users');
+		expect(r({ v: 'v1', '?qs': '?foo=bar' })).toBe('/v1/api/users?foo=bar');
+		expect(r({ v: 'v1', '?qs': (v) => !v && `?${v}` })).toBe('/v1/api/users');
+	});
+
+	it.skip('should parse template with nested parameters', ({ expect }) => {
+		const r1 = string.tsf('/{foo/{bar}}' as string);
+		expect(r1({ 'foo/{bar}': (v) => v })).toBe('/foo/{bar}');
+
+		const r2 = string.tsf('/{nested-{}-braces}' as string);
+		expect(r2({ 'nested-{}-braces': (v) => v })).toBe('/nested-{}-braces');
+	});
+});

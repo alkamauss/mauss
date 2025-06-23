@@ -1,24 +1,19 @@
-import { suite } from 'uvu';
-import * as assert from 'uvu/assert';
+import { describe } from 'vitest';
 import { modulo } from './index.js';
 
-const suites = {
-	'number/modulo': suite('number/modulo'),
-};
+describe('modulo', ({ concurrent: it }) => {
+	it('modulo numbers', ({ expect }) => {
+		expect(modulo(10, 0)).toBeNaN();
 
-suites['number/modulo']('modulo numbers', () => {
-	assert.equal(modulo(10, 0), NaN);
-
-	assert.equal(modulo(10, 3), 1);
-	assert.equal(modulo(-10, 3), 2);
-	assert.equal(modulo(10, -3), -2);
-	assert.equal(modulo(-10, -3), -1);
-	assert.equal(modulo(10, 5), 0);
-	assert.equal(modulo(-10, 5), 0);
-	assert.equal(modulo(10, -5), 0);
-	assert.equal(modulo(-10, -5), 0);
-	assert.equal(modulo(10, 1), 0);
-	assert.equal(modulo(10, 10), 0);
+		expect(modulo(10, 3) === 1).toBe(true);
+		expect(modulo(-10, 3) === 2).toBe(true);
+		expect(modulo(10, -3) === -2).toBe(true);
+		expect(modulo(-10, -3) === -1).toBe(true);
+		expect(modulo(10, 5) === 0).toBe(true);
+		expect(modulo(-10, 5) === 0).toBe(true);
+		expect(modulo(10, -5) === 0).toBe(true);
+		expect(modulo(-10, -5) === 0).toBe(true);
+		expect(modulo(10, 1) === 0).toBe(true);
+		expect(modulo(10, 10) === 0).toBe(true);
+	});
 });
-
-Object.values(suites).forEach((v) => v.run());
