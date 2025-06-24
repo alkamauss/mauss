@@ -83,12 +83,12 @@ describe('schema', ({ concurrent: it }) => {
 
 	it('default value', ({ expect }) => {
 		const schema = define(({ optional, string }) => ({
-			title: optional(string(), 'Default Title'),
+			title: optional(string(), 'default'),
 		}));
 
 		expect(schema).toBeTypeOf('function');
-		expect(schema({})).toEqual({ title: 'Default Title' });
-		expect(schema({ title: 'Custom Title' })).toEqual({ title: 'Custom Title' });
+		expect(schema({})).toEqual({ title: 'default' });
+		expect(schema({ title: 'custom' })).toEqual({ title: 'custom' });
 
 		expect(() => schema({ title: 123 })).toThrow();
 		expect(() => schema(null)).toThrow();
@@ -98,26 +98,24 @@ describe('schema', ({ concurrent: it }) => {
 describe('errors', ({ concurrent: it }) => {
 	it('error types', ({ expect }) => {
 		expect(() => define(({ literal }) => literal())('')).toThrowError(
-			expect.objectContaining({ name: 'SchemaError' }),
+			expect.objectContaining({ message: expect.stringContaining('[InvalidSchema]') }),
 		);
 
 		expect(() => define(({ string }) => string())(123)).toThrowError(
-			expect.objectContaining({ name: 'InputError' }),
+			expect.objectContaining({ message: expect.stringContaining('[UnexpectedInput]') }),
 		);
 
 		expect(() => define(({ number }) => number())(NaN)).toThrowError(
-			expect.objectContaining({ name: 'InvalidInput' }),
+			expect.objectContaining({ message: expect.stringContaining('[UnexpectedInput]') }),
 		);
 	});
 
 	it('input error', ({ expect }) => {
 		const schema = define(({ string }) => string());
 
-		expect(() => schema(123)).toThrow('Unexpected input for string: Received "number" (123)');
-		expect(() => schema(null)).toThrow('Unexpected input for string: Received "object" (null)');
-		expect(() => schema(undefined)).toThrow(
-			'Unexpected input for string: Received "undefined" (undefined)',
-		);
+		expect(() => schema(123)).toThrow('[UnexpectedInput] Received "number"');
+		expect(() => schema(null)).toThrow('[UnexpectedInput] Received "object"');
+		expect(() => schema(undefined)).toThrow('[UnexpectedInput] Received "undefined"');
 	});
 
 	it('wrap safely', async ({ expect }) => {
@@ -129,8 +127,7 @@ describe('errors', ({ concurrent: it }) => {
 		expect(schema(123)).toEqual(
 			expect.objectContaining({
 				error: expect.objectContaining({
-					name: 'InputError',
-					message: 'Unexpected input for string: Received "number" (123)',
+					message: '[UnexpectedInput] Received "number"',
 				}),
 			}),
 		);

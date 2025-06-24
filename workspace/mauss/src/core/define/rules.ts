@@ -1,5 +1,3 @@
-import { InputError, InvalidInput, SchemaError } from './error.js';
-
 type Validator<T = unknown> = (input: unknown) => never | T;
 
 export function optional<T>(validator: Validator<T>): Validator<T | undefined>;
@@ -10,33 +8,42 @@ export function optional<T>(validator: Validator<T>, fallback?: T): Validator<un
 
 export function boolean<T = boolean>(transform?: (value: boolean) => T): Validator<T> {
 	return (input) => {
-		if (typeof input !== 'boolean') throw new InputError('boolean', input);
+		if (typeof input !== 'boolean') {
+			throw { expected: 'boolean', message: `[UnexpectedInput] Received "${typeof input}"` };
+		}
 		return transform ? transform(input) : (input as T);
 	};
 }
 export function number<T = number>(transform?: (value: number) => T): Validator<T> {
 	return (input) => {
-		if (typeof input !== 'number') throw new InputError('number', input);
-		if (Number.isNaN(input)) throw new InvalidInput('number', 'Received NaN');
+		if (typeof input !== 'number' || Number.isNaN(input)) {
+			const type = Number.isNaN(input) ? 'NaN' : typeof input;
+			throw { expected: 'number', message: `[UnexpectedInput] Received "${type}"` };
+		}
 		return transform ? transform(input) : (input as T);
 	};
 }
 export function string<T = string>(transform?: (value: string) => T): Validator<T> {
 	return (input) => {
-		if (typeof input !== 'string') throw new InputError('string', input);
+		if (typeof input !== 'string') {
+			throw { expected: 'string', message: `[UnexpectedInput] Received "${typeof input}"` };
+		}
 		return transform ? transform(input) : (input as T);
 	};
 }
 export function literal<const T extends readonly string[]>(...values: T): Validator<T[number]> {
 	return (input) => {
 		if (values.length === 0) {
-			throw new SchemaError('Literal validator requires at least one value');
+			throw { expected: 'literal', message: '[InvalidSchema] No values provided' };
 		}
 		if (typeof input !== 'string') {
-			throw new InputError('literal', input);
+			throw { expected: 'literal', message: `[UnexpectedInput] Received "${typeof input}"` };
 		}
 		if (!values.includes(input)) {
-			throw new InvalidInput('literal', `"${input}" is not in [${values.join(', ')}]`);
+			throw {
+				expected: 'literal',
+				message: `[InvalidInput] "${input}" is not in [${values.join(', ')}]`,
+			};
 		}
 		return input;
 	};
@@ -44,8 +51,12 @@ export function literal<const T extends readonly string[]>(...values: T): Valida
 
 export function date<T = Date>(transform?: (value: Date) => T): Validator<T> {
 	return (input) => {
-		if (!(input instanceof Date)) throw new InputError('date', input);
-		if (Number.isNaN(input.getTime())) throw new InvalidInput('date', 'Received an invalid date');
+		if (!(input instanceof Date)) {
+			throw { expected: 'date', message: `[UnexpectedInput] Received "${typeof input}"` };
+		}
+		if (Number.isNaN(input.getTime())) {
+			throw { expected: 'date', message: '[InvalidInput] Received an invalid date' };
+		}
 		return transform ? transform(input) : (input as T);
 	};
 }
@@ -54,16 +65,23 @@ export function array<T, R = T[]>(
 	transform?: (values: T[]) => R,
 ): Validator<R> {
 	return (input) => {
-		if (!Array.isArray(input)) throw new InputError('array', input);
+		if (!Array.isArray(input)) {
+			const type = typeof input === 'object' ? 'non-array object' : typeof input;
+			throw { expected: 'array', message: `[UnexpectedInput] Received "${type}"` };
+		}
 		const result = input.map((v) => item(v));
 		return transform ? transform(result) : (result as R);
 	};
 }
 export function record<T>(value: Validator<T>): Validator<Record<string, T>> {
 	return (input) => {
-		if (typeof input !== 'object') throw new InputError('record', input);
-		if (input == null) throw new InvalidInput('record', 'Received null or undefined');
-		if (Array.isArray(input)) throw new InvalidInput('record', 'Received an array');
+		if (typeof input !== 'object' || input == null) {
+			const type = typeof input === 'object' ? 'null or undefined' : typeof input;
+			throw { expected: 'record', message: `[UnexpectedInput] Received "${type}"` };
+		}
+		if (Array.isArray(input)) {
+			throw { expected: 'record', message: '[InvalidInput] Received an array' };
+		}
 		const result: Record<string, T> = {};
 		for (const key in input) {
 			result[key] = value((input as any)[key]);
