@@ -12,6 +12,7 @@ export { arrange, drill } from './compare/customized.js';
 export { identical } from './compare/identical.js';
 export { compare, inspect, wildcard } from './compare/index.js';
 export { date } from './date/index.js';
+export { define } from './define/index.js';
 export { curry, inverse, pipe } from './lambda/index.js';
 export { clamp, modulo } from './number/index.js';
 export { clone, iterate } from './object/index.js';
