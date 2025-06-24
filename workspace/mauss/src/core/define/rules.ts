@@ -49,13 +49,17 @@ export function date<T = Date>(transform?: (value: Date) => T): Validator<T> {
 		return transform ? transform(input) : (input as T);
 	};
 }
-export function array<T = unknown>(item: Validator<T>): Validator<T[]> {
+export function array<T, R = T[]>(
+	item: Validator<T>,
+	transform?: (values: T[]) => R,
+): Validator<R> {
 	return (input) => {
 		if (!Array.isArray(input)) throw new InputError('array', input);
-		return input.map((v) => item(v));
+		const result = input.map((v) => item(v));
+		return transform ? transform(result) : (result as R);
 	};
 }
-export function record<T = unknown>(value: Validator<T>): Validator<Record<string, T>> {
+export function record<T>(value: Validator<T>): Validator<Record<string, T>> {
 	return (input) => {
 		if (typeof input !== 'object') throw new InputError('record', input);
 		if (input == null) throw new InvalidInput('record', 'Received null or undefined');
