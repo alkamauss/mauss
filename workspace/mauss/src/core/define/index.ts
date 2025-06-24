@@ -18,10 +18,11 @@ function check(input: Record<string, unknown>, schema: Schema) {
 	}
 	return input;
 }
+
+type I<T> = T extends Validator<infer R> ? R : N<T>;
+type N<T> = T extends Record<string, any> ? { [K in keyof T]: I<T[K]> } : never;
 export function define<T>(builder: (r: typeof rules) => T) {
 	const schema = builder(rules) as Validator | Schema;
-	type I<T> = T extends Validator<infer R> ? R : N<T>;
-	type N<T> = T extends Record<string, any> ? { [K in keyof T]: I<T[K]> } : never;
 	return (input: unknown): I<T> => {
 		if (typeof schema === 'function') return schema(input) as I<T>;
 		return check(input as any, schema) as I<T>;

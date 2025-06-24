@@ -59,8 +59,14 @@ type V<T> = (input: unknown) => T;
 			jp: r.optional(r.string()),
 		},
 		genres: r.array(r.string()),
-		rating: r.optional(r.number()),
-		completed: r.optional(r.number()),
+		rating: r.optional(
+			r.array(r.number(), (ratings) => {
+				const total = ratings.reduce((acc, cur) => +cur + acc, 0);
+				return Math.round((total / ratings.length + Number.EPSILON) * 100) / 100;
+			}),
+			-1,
+		),
+		completed: r.optional(r.string()),
 		verdict: r.literal('pending', 'not-recommended', 'contextual', 'recommended', 'must-watch'),
 
 		backdrop: r.optional(r.string()),
@@ -83,8 +89,8 @@ type V<T> = (input: unknown) => T;
 	expect<string>(metadata.title.en);
 	expect<undefined | string>(metadata.title.jp);
 	expect<string[]>(metadata.genres);
-	expect<undefined | number>(metadata.rating);
-	expect<undefined | number>(metadata.completed);
+	expect<number>(metadata.rating);
+	expect<undefined | string>(metadata.completed);
 	expect<'pending' | 'not-recommended' | 'contextual' | 'recommended' | 'must-watch'>(
 		metadata.verdict,
 	);
