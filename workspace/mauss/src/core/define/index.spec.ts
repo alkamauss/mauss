@@ -34,6 +34,29 @@ describe('primitives', ({ concurrent: it }) => {
 		expect(() => schema({ status: 'inactive' })).toThrow();
 		expect(() => schema(null)).toThrow();
 	});
+
+	it('number', ({ expect }) => {
+		const schema = define(({ number }) => number());
+
+		expect(schema).toBeTypeOf('function');
+		expect(schema(123)).toBe(123);
+		expect(schema(0)).toBe(0);
+		expect(schema(-456)).toBe(-456);
+
+		expect(() => schema('123')).toThrow();
+		expect(() => schema(null)).toThrow();
+		expect(() => schema(undefined)).toThrow();
+	});
+
+	it('date', ({ expect }) => {
+		const schema = define(({ date }) => date());
+
+		expect(schema).toBeTypeOf('function');
+		expect(schema(new Date('2025-06-25'))).toEqual(new Date('2025-06-25'));
+		expect(schema('2025-06-25')).toEqual(new Date('2025-06-25'));
+
+		expect(() => schema('invalid')).toThrow();
+	});
 });
 
 describe('schema', ({ concurrent: it }) => {
