@@ -51,13 +51,11 @@ export function literal<const T extends readonly string[]>(...values: T): Valida
 
 export function date<T = Date>(transform?: (value: Date) => T): Validator<T> {
 	return (input) => {
-		if (!(input instanceof Date)) {
-			throw { expected: 'date', message: `[UnexpectedInput] Received "${typeof input}"` };
+		const d = input instanceof Date ? new Date(input.getTime()) : new Date(input as any);
+		if (Number.isNaN(d.getTime())) {
+			throw { expected: 'date', message: `[InvalidInput] Received "Invalid Date" from ${input}` };
 		}
-		if (Number.isNaN(input.getTime())) {
-			throw { expected: 'date', message: '[InvalidInput] Received an invalid date' };
-		}
-		return transform ? transform(input) : (input as T);
+		return transform ? transform(d) : (d as T);
 	};
 }
 export function array<T, R = T[]>(
