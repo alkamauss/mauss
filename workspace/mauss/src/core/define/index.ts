@@ -54,7 +54,7 @@ function check({ path = [], errors, input, schema }: Options) {
 
 type I<T> = T extends Validator<infer R> ? R : N<T>;
 type N<T> = T extends Record<string, any> ? { [K in keyof T]: I<T[K]> } : never;
-export function define<T>(builder: (r: typeof rules) => T) {
+export function define<T>(builder: (r: rules.Rules) => T) {
 	const schema = builder(rules) as Validator | Schema;
 	return (input: unknown): I<T> => {
 		if (typeof schema === 'function') {

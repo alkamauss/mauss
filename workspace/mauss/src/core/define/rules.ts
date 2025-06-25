@@ -87,3 +87,14 @@ export function record<T>(value: Validator<T>): Validator<Record<string, T>> {
 		return result;
 	};
 }
+
+export interface Rules {
+	optional: typeof optional;
+	boolean: typeof boolean;
+	number: typeof number;
+	string: typeof string;
+	literal: typeof literal;
+	date: typeof date;
+	array: typeof array;
+	record: typeof record;
+}
