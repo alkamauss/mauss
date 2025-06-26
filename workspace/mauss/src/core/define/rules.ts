@@ -71,7 +71,10 @@ export function array<T, R = T[]>(
 		return transform ? transform(result) : (result as R);
 	};
 }
-export function record<T>(value: Validator<T>): Validator<Record<string, T>> {
+export function record<T, R = Record<string, T>>(
+	value: Validator<T>,
+	transform?: (record: Record<string, T>) => R,
+): Validator<R> {
 	return (input) => {
 		if (typeof input !== 'object' || input == null) {
 			const type = typeof input === 'object' ? 'null or undefined' : typeof input;
@@ -84,7 +87,7 @@ export function record<T>(value: Validator<T>): Validator<Record<string, T>> {
 		for (const key in input) {
 			result[key] = value((input as any)[key]);
 		}
-		return result;
+		return transform ? transform(result) : (result as R);
 	};
 }
 
