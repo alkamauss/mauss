@@ -60,10 +60,17 @@ type V<T> = (input: unknown) => T;
 		},
 		genres: r.array(r.string()),
 		rating: r.optional(
-			r.array(r.number(), (ratings) => {
-				const total = ratings.reduce((acc, cur) => +cur + acc, 0);
-				return Math.round((total / ratings.length + Number.EPSILON) * 100) / 100;
-			}),
+			r.record(
+				r.array(
+					r.record(r.string(), (o) => Object.values(o).reduce((a, c) => +c + a, 0)),
+					(category) => category.reduce((a, c) => +c + a, 0) / category.length,
+				),
+				(rubric) => {
+					const ratings = Object.values(rubric);
+					const total = ratings.reduce((a, c) => +c + a, 0);
+					return Math.round((total / ratings.length + Number.EPSILON) * 100) / 100;
+				},
+			),
 			-1,
 		),
 		completed: r.optional(r.string()),
