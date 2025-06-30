@@ -43,9 +43,24 @@ describe('primitives', ({ concurrent: it }) => {
 		expect(schema(0)).toBe(0);
 		expect(schema(-456)).toBe(-456);
 
-		expect(() => schema('123')).toThrow();
+		expect(schema('0')).toBe(0);
+		expect(schema('123')).toBe(123);
+		expect(schema(' -456 ')).toBe(-456);
+		expect(schema(' 0.00 ')).toBe(0);
+		expect(schema(' 123.45 ')).toBe(123.45);
+
+		expect(schema(true)).toBe(1);
+		expect(schema(false)).toBe(0);
+
+		expect(schema(9007199254740991n)).toBe(9007199254740991);
+		expect(schema(-9007199254740991n)).toBe(-9007199254740991);
+
+		expect(() => schema('invalid')).toThrow();
+		expect(() => schema(NaN)).toThrow();
 		expect(() => schema(null)).toThrow();
 		expect(() => schema(undefined)).toThrow();
+		expect(() => schema(9007199254740992n)).toThrow();
+		expect(() => schema(-9007199254740992n)).toThrow();
 	});
 
 	it('date', ({ expect }) => {

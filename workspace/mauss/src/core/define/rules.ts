@@ -16,11 +16,39 @@ export function boolean<T = boolean>(transform?: (value: boolean) => T): Validat
 }
 export function number<T = number>(transform?: (value: number) => T): Validator<T> {
 	return (input) => {
-		if (typeof input !== 'number' || Number.isNaN(input)) {
-			const type = Number.isNaN(input) ? 'NaN' : typeof input;
-			throw { expected: 'number', message: `[UnexpectedInput] Received "${type}"` };
+		switch (typeof input) {
+			case 'number':
+				break;
+			case 'string': {
+				if (input.trim() === '') {
+					throw { expected: 'number', message: '[UnexpectedInput] Received empty string' };
+				}
+				input = Number(input);
+				break;
+			}
+			case 'boolean': {
+				input = input ? 1 : 0;
+				break;
+			}
+			case 'bigint': {
+				if (input > Number.MAX_SAFE_INTEGER || input < Number.MIN_SAFE_INTEGER) {
+					throw {
+						expected: 'number',
+						message: '[UnsafeCast] BigInt value exceeds safe integer range',
+					};
+				}
+				input = Number(input);
+				break;
+			}
+			default: {
+				throw { expected: 'number', message: `[UnexpectedInput] Received "${typeof input}"` };
+			}
 		}
-		return transform ? transform(input) : (input as T);
+		if (Number.isNaN(input)) {
+			throw { expected: 'number', message: '[UnexpectedInput] Received "NaN"' };
+		}
+
+		return transform ? transform(input as number) : (input as T);
 	};
 }
 export function string<T = string>(transform?: (value: string) => T): Validator<T> {
