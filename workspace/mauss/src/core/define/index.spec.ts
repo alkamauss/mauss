@@ -10,7 +10,6 @@ describe('primitives', ({ concurrent: it }) => {
 		expect(schema('hello')).toBe('hello');
 
 		expect(() => schema(123)).toThrow();
-		expect(() => schema(null)).toThrow();
 		expect(() => schema(undefined)).toThrow();
 
 		expect(define(({ string }) => string((v) => v.toUpperCase()))('hello')).toBe('HELLO');
@@ -32,7 +31,6 @@ describe('primitives', ({ concurrent: it }) => {
 		expect(schema({ status: 'active' })).toEqual({ status: 'active' });
 
 		expect(() => schema({ status: 'inactive' })).toThrow();
-		expect(() => schema(null)).toThrow();
 	});
 
 	it('number', ({ expect }) => {
@@ -81,9 +79,9 @@ describe('schema', ({ concurrent: it }) => {
 		expect(schema).toBeTypeOf('function');
 		expect(schema({ title: 'Hello' })).toEqual({ title: 'Hello' });
 
-		expect(() => schema({ title: 123 })).toThrow();
-		expect(() => schema({})).toThrow();
 		expect(() => schema(null)).toThrow();
+		expect(() => schema({})).toThrow();
+		expect(() => schema({ title: 123 })).toThrow();
 	});
 
 	it('nested object schema', ({ expect }) => {
@@ -93,8 +91,6 @@ describe('schema', ({ concurrent: it }) => {
 		expect(schema({ user: { name: 'Alice' } })).toEqual({ user: { name: 'Alice' } });
 
 		expect(() => schema({ user: { name: 123 } })).toThrow();
-		expect(() => schema({})).toThrow();
-		expect(() => schema(null)).toThrow();
 	});
 
 	it('array schema', ({ expect }) => {
@@ -104,19 +100,16 @@ describe('schema', ({ concurrent: it }) => {
 		expect(schema({ tags: ['tag1', 'tag2'] })).toEqual({ tags: ['tag1', 'tag2'] });
 
 		expect(() => schema({ tags: ['tag1', 123] })).toThrow();
-		expect(() => schema({})).toThrow();
-		expect(() => schema(null)).toThrow();
 	});
 
 	it('optional field', ({ expect }) => {
 		const schema = define(({ optional, string }) => ({ title: optional(string()) }));
 
 		expect(schema).toBeTypeOf('function');
-		expect(schema({ title: 'Hello' })).toEqual({ title: 'Hello' });
 		expect(schema({})).toEqual({});
+		expect(schema({ title: 'Hello' })).toEqual({ title: 'Hello' });
 
 		expect(() => schema({ title: 123 })).toThrow();
-		expect(() => schema(null)).toThrow();
 	});
 
 	it('default value', ({ expect }) => {
@@ -129,7 +122,25 @@ describe('schema', ({ concurrent: it }) => {
 		expect(schema({ title: 'custom' })).toEqual({ title: 'custom' });
 
 		expect(() => schema({ title: 123 })).toThrow();
-		expect(() => schema(null)).toThrow();
+	});
+
+	it('optional object', ({ expect }) => {
+		const schema = define(({ optional, string }) => ({
+			soundtrack: optional({
+				name: string(),
+				type: optional(string(), ''),
+				artist: string(),
+				youtube: optional(string()),
+			}),
+		}));
+
+		expect(schema).toBeTypeOf('function');
+		expect(schema({})).toEqual({ soundtrack: undefined });
+		expect(schema({ soundtrack: { name: 'song', artist: 'artist' } })).toEqual({
+			soundtrack: { name: 'song', type: '', artist: 'artist', youtube: undefined },
+		});
+
+		expect(() => schema({ soundtrack: { name: 123 } })).toThrow();
 	});
 });
 
