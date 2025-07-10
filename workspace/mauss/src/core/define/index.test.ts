@@ -1,7 +1,7 @@
 import { define } from './index.js';
 
 declare function expect<T>(v: T): void;
-type V<T> = (input: unknown) => T;
+type IsOptional<T> = undefined extends T ? true : false;
 
 (/* define */) => {
 	define((r) => ({
@@ -19,30 +19,71 @@ type V<T> = (input: unknown) => T;
 		},
 	}));
 
-	expect<V<string>>(define(({ string }) => string()));
-	expect<V<number>>(define(({ string }) => string((num) => +num)));
+	define(({ string }) => ({ uppercase: string((v) => v.toUpperCase()) }));
+	define(({ string }) => ({ string: string((v) => v.length > 0 && v) }));
 
-	expect<V<{ title: string }>>(define(({ string }) => ({ title: string() })));
-	expect<V<{ average: number }>>(define(({ string }) => ({ average: string((avg) => +avg) })));
+	expect<string>(define(({ string }) => string())({}));
+	expect<number>(define(({ string }) => string((num) => +num))({}));
 
-	expect<V<{ title: string; description?: string }>>(
-		define((rules) => ({ title: rules.string(), description: rules.string() })),
-	);
+	expect<string>(define(({ string }) => ({ title: string() }))({}).title);
+	expect<number>(define(({ string }) => ({ average: string((avg) => +avg) }))({}).average);
 
-	expect<V<{ user: { name: string } }>>(define(({ string }) => ({ user: { name: string() } })));
-	expect<V<{ user: { name: string; age?: number } }>>(
-		define((rules) => ({
-			user: { name: rules.string(), age: rules.optional(rules.string((age) => +age)) },
-		})),
-	);
+	() => {
+		const schema = define(({ optional, string }) => ({
+			title: string(),
+			description: optional(string()),
+		}))({});
+		expect<string>(schema.title);
+		expect<undefined | string>(schema.description);
+	};
 
-	define((rules) => ({
-		string: rules.string((v) => v.toUpperCase()),
-	}));
+	() => {
+		const schema = define(({ optional, string }) => ({
+			user: { name: string(), age: optional(string((age) => +age)) },
+		}))({});
+		expect<string>(schema.user.name);
+		expect<undefined | number>(schema.user.age);
+	};
 
-	define((rules) => ({
-		string: rules.string((v) => v.length > 0 && v),
-	}));
+	(/* optional defined object */) => {
+		const schema = define(({ optional, string }) => ({
+			soundtrack: optional({
+				name: string(),
+				type: optional(string()),
+				artist: string(),
+				youtube: optional(string()),
+			}),
+		}))({});
+
+		expect<IsOptional<typeof schema.soundtrack>>(true);
+		if (schema.soundtrack) {
+			expect<string>(schema.soundtrack.name);
+			expect<undefined | string>(schema.soundtrack.type);
+			expect<string>(schema.soundtrack.artist);
+			expect<undefined | string>(schema.soundtrack.youtube);
+		}
+	};
+
+	// (/* object defined in array */) => {
+	// 	const schema = define(({ optional, array, string }) => ({
+	// 		soundtrack: optional(
+	// 			array({
+	// 				name: string(),
+	// 				type: optional(string()),
+	// 				artist: string(),
+	// 				youtube: optional(string()),
+	// 			}),
+	// 		),
+	// 	}))({});
+
+	// 	expect<IsOptional<typeof schema.soundtrack>>(true);
+	// 	if (schema.soundtrack) {
+	// 		expect<string>(schema.soundtrack.name);
+	// 		expect<undefined | string>(schema.soundtrack.type);
+	// 		expect<string>(schema.soundtrack.artist);
+	// 		expect<undefined | string>(schema.soundtrack.youtube);
+	// 	}
+	// };
 };
 
 (/* review */) => {
