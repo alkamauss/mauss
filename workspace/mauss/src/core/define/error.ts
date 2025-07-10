@@ -1,7 +1,7 @@
-import type * as rules from './rules.js';
+import type { Rules } from './index.js';
 
 export interface Issue {
-	expected: 'definition' | 'object' | keyof typeof rules;
+	expected: 'definition' | 'object' | keyof Rules;
 	path: string[];
 	message: string;
 }

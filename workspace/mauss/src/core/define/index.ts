@@ -1,6 +1,6 @@
 import { Rejection, type Issue } from './error.js';
 
-interface Rules {
+export interface Rules {
 	optional: typeof optional;
 
 	boolean: typeof boolean;
