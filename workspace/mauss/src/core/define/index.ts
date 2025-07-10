@@ -93,7 +93,7 @@ function check({ path = [], errors, input, schema }: Options) {
 
 export function optional<T>(validator: Validator<T>): Validator<T | undefined>;
 export function optional<T>(validator: Validator<T>, fallback: T): Validator<T>;
-export function optional<T extends Record<string, I<any>>>(obj: T): Validator<undefined | N<T>>;
+export function optional<T extends Record<string, I<any>>>(item: T): Validator<undefined | N<T>>;
 export function optional(validator: any, fallback?: any): Validator<any> {
 	if (typeof validator === 'function') {
 		return (input) => (input === void 0 ? fallback : validator(input));
@@ -115,6 +115,7 @@ export function boolean<T = boolean>(transform?: (value: boolean) => T): Validat
 		return transform ? transform(input) : (input as T);
 	};
 }
+
 export function number<T = number>(transform?: (value: number) => T): Validator<T> {
 	return (input) => {
 		switch (typeof input) {
@@ -152,6 +153,7 @@ export function number<T = number>(transform?: (value: number) => T): Validator<
 		return transform ? transform(input as number) : (input as T);
 	};
 }
+
 export function string<T = string>(transform?: (value: string) => T): Validator<T> {
 	return (input) => {
 		if (typeof input !== 'string') {
@@ -160,6 +162,7 @@ export function string<T = string>(transform?: (value: string) => T): Validator<
 		return transform ? transform(input) : (input as T);
 	};
 }
+
 export function literal<const T extends readonly string[]>(...values: T): Validator<T[number]> {
 	return (input) => {
 		if (values.length === 0) {
@@ -187,19 +190,27 @@ export function date<T = Date>(transform?: (value: Date) => T): Validator<T> {
 		return transform ? transform(d) : (d as T);
 	};
 }
-export function array<T, R = T[]>(
-	item: Validator<T>,
-	transform?: (values: T[]) => R,
-): Validator<R> {
+
+export function array<T, R = T[]>(item: Validator<T>, transform?: (values: T[]) => R): Validator<R>;
+export function array<T extends Record<string, I<any>>>(item: T): Validator<undefined | N<T>[]>;
+export function array(item: any, transform?: any): Validator<any> {
 	return (input) => {
 		if (!Array.isArray(input)) {
 			const type = typeof input === 'object' ? 'non-array object' : typeof input;
 			throw { expected: 'array', message: `[UnexpectedInput] Received "${type}"` };
 		}
-		const result = input.map((v) => item(v));
-		return transform ? transform(result) : (result as R);
+
+		const result = input.map((v) => {
+			if (typeof item === 'function') return item(v);
+			const errors: Options['errors'] = [];
+			const result = check({ input: v, schema: item, errors });
+			if (errors.length) throw new Rejection(errors);
+			return result;
+		});
+		return transform ? transform(result) : result;
 	};
 }
+
 export function record<T, R = Record<string, T>>(
 	value: Validator<T>,
 	transform?: (record: Record<string, T>) => R,
