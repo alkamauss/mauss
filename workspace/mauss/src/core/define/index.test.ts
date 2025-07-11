@@ -64,26 +64,27 @@ type IsOptional<T> = undefined extends T ? true : false;
 		}
 	};
 
-	// (/* object defined in array */) => {
-	// 	const schema = define(({ optional, array, string }) => ({
-	// 		soundtrack: optional(
-	// 			array({
-	// 				name: string(),
-	// 				type: optional(string()),
-	// 				artist: string(),
-	// 				youtube: optional(string()),
-	// 			}),
-	// 		),
-	// 	}))({});
+	(/* object defined in array */) => {
+		const schema = define(({ optional, array, string }) => ({
+			soundtrack: optional(
+				array({
+					name: string(),
+					type: optional(string()),
+					artist: string(),
+					youtube: optional(string()),
+				}),
+			),
+		}))({});
 
-	// 	expect<IsOptional<typeof schema.soundtrack>>(true);
-	// 	if (schema.soundtrack) {
-	// 		expect<string>(schema.soundtrack.name);
-	// 		expect<undefined | string>(schema.soundtrack.type);
-	// 		expect<string>(schema.soundtrack.artist);
-	// 		expect<undefined | string>(schema.soundtrack.youtube);
-	// 	}
-	// };
+		expect<IsOptional<typeof schema.soundtrack>>(true);
+		if (schema.soundtrack && schema.soundtrack.length) {
+			const [track] = schema.soundtrack;
+			expect<string>(track.name);
+			expect<undefined | string>(track.type);
+			expect<string>(track.artist);
+			expect<undefined | string>(track.youtube);
+		}
+	};
 };
 
 (/* review */) => {

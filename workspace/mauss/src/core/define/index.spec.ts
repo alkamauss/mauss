@@ -102,6 +102,25 @@ describe('schema', ({ concurrent: it }) => {
 		expect(() => schema({ tags: ['tag1', 123] })).toThrow();
 	});
 
+	it('object in array schema', ({ expect }) => {
+		const schema = define(({ optional, array, string }) => ({
+			soundtrack: array({
+				name: string(),
+				artist: optional(string(), ''),
+				youtube: optional(string()),
+			}),
+		}));
+
+		expect(schema).toBeTypeOf('function');
+		expect(schema({ soundtrack: [] })).toEqual({ soundtrack: [] });
+		expect(schema({ soundtrack: [{ name: 'song', artist: 'artist' }] })).toEqual({
+			soundtrack: [{ name: 'song', artist: 'artist', youtube: undefined }],
+		});
+
+		expect(() => schema({})).toThrow();
+		expect(() => schema({ soundtrack: [{ name: 123 }] })).toThrow();
+	});
+
 	it('optional field', ({ expect }) => {
 		const schema = define(({ optional, string }) => ({ title: optional(string()) }));
 
@@ -128,8 +147,7 @@ describe('schema', ({ concurrent: it }) => {
 		const schema = define(({ optional, string }) => ({
 			soundtrack: optional({
 				name: string(),
-				type: optional(string(), ''),
-				artist: string(),
+				artist: optional(string(), ''),
 				youtube: optional(string()),
 			}),
 		}));
@@ -137,10 +155,25 @@ describe('schema', ({ concurrent: it }) => {
 		expect(schema).toBeTypeOf('function');
 		expect(schema({})).toEqual({ soundtrack: undefined });
 		expect(schema({ soundtrack: { name: 'song', artist: 'artist' } })).toEqual({
-			soundtrack: { name: 'song', type: '', artist: 'artist', youtube: undefined },
+			soundtrack: { name: 'song', artist: 'artist', youtube: undefined },
 		});
 
 		expect(() => schema({ soundtrack: { name: 123 } })).toThrow();
+	});
+
+	it('optional object in array', ({ expect }) => {
+		const schema = define(({ optional, array, string }) => ({
+			soundtrack: optional(array({ name: string() })),
+		}));
+
+		expect(schema).toBeTypeOf('function');
+		expect(schema({})).toEqual({ soundtrack: undefined });
+		expect(schema({ soundtrack: [] })).toEqual({ soundtrack: [] });
+		expect(schema({ soundtrack: [{ name: 'song' }] })).toEqual({
+			soundtrack: [{ name: 'song' }],
+		});
+
+		expect(() => schema({ soundtrack: {} })).toThrow();
 	});
 });
 
