@@ -1,6 +1,7 @@
 import { define } from './index.js';
 
 declare function expect<T>(v: T): void;
+type IsNever<T> = [T] extends [never] ? true : false;
 type IsOptional<T> = undefined extends T ? true : false;
 
 (/* define */) => {
@@ -43,6 +44,20 @@ type IsOptional<T> = undefined extends T ? true : false;
 		}))({});
 		expect<string>(schema.user.name);
 		expect<undefined | number>(schema.user.age);
+	};
+
+	(/* optional defined array */) => {
+		const optional = define(({ optional, array, string }) => ({
+			alias: optional(array(string())),
+		}))({});
+		expect<undefined | string[]>(optional.alias);
+
+		const fallback = define(({ optional, array, string }) => ({
+			alias: optional(array(string()), []),
+		}))({});
+		expect<IsOptional<typeof fallback.alias>>(false);
+		expect<IsNever<(typeof fallback.alias)[0]>>(false);
+		expect<string>(fallback.alias[0]);
 	};
 
 	(/* optional defined object */) => {
