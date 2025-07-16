@@ -6,8 +6,8 @@ export interface Rules {
 	boolean: typeof boolean;
 	number: typeof number;
 	string: typeof string;
-
 	literal: typeof literal;
+
 	date: typeof date;
 
 	array: typeof array;
@@ -91,8 +91,9 @@ function check({ path = [], errors, input, schema }: Options) {
 	return result;
 }
 
+type Req<T> = T extends Validator<infer U> ? U : never;
 export function optional<T>(validator: Validator<T>): Validator<T | undefined>;
-export function optional<T>(validator: Validator<T>, fallback: T): Validator<T>;
+export function optional<T extends Validator>(validator: T, fallback: Req<T>): Validator<Req<T>>;
 export function optional<T extends Record<string, I<any>>>(item: T): Validator<undefined | N<T>>;
 export function optional(validator: any, fallback?: any): Validator<any> {
 	if (typeof validator === 'function') {
@@ -106,6 +107,8 @@ export function optional(validator: any, fallback?: any): Validator<any> {
 		return result;
 	};
 }
+
+// --- primitive validators ---
 
 export function boolean<T = boolean>(transform?: (value: boolean) => T): Validator<T> {
 	return (input) => {
@@ -181,6 +184,8 @@ export function literal<const T extends readonly string[]>(...values: T): Valida
 	};
 }
 
+// --- string converters ---
+
 export function date<T = Date>(transform?: (value: Date) => T): Validator<T> {
 	return (input) => {
 		const d = input instanceof Date ? new Date(input.getTime()) : new Date(input as any);
@@ -190,6 +195,8 @@ export function date<T = Date>(transform?: (value: Date) => T): Validator<T> {
 		return transform ? transform(d) : (d as T);
 	};
 }
+
+// --- array & record ---
 
 export function array<T, R = T[]>(item: Validator<T>, transform?: (values: T[]) => R): Validator<R>;
 export function array<T extends Record<string, I<any>>>(item: T): Validator<undefined | N<T>[]>;
