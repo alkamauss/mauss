@@ -1,5 +1,6 @@
 import { describe } from 'vitest';
 import * as string from './index.js';
+import { stylize } from './stylize.js';
 
 describe('capitalize', ({ concurrent: it }) => {
 	it('should capitalize the first letter of a string', ({ expect }) => {
@@ -61,5 +62,62 @@ describe('tsf', ({ concurrent: it }) => {
 
 		const r2 = string.tsf('/{nested-{}-braces}' as string);
 		expect(r2({ 'nested-{}-braces': (v) => v })).toBe('/nested-{}-braces');
+	});
+});
+
+describe('stylize', ({ concurrent: it }) => {
+	it('to camelCase', ({ expect }) => {
+		expect(stylize('myVarName', 'camel')).toBe('myVarName');
+		expect(stylize('my_var_name', 'camel')).toBe('myVarName');
+		expect(stylize('MyVarName', 'camel')).toBe('myVarName');
+		expect(stylize('my-var-name', 'camel')).toBe('myVarName');
+		expect(stylize('FOOBarBAZ', 'camel')).toBe('fooBarBaz');
+
+		expect(stylize('my__var___name', 'camel')).toBe('myVarName');
+		expect(stylize('foo  bar   baz', 'camel')).toBe('fooBarBaz');
+	});
+
+	it('to kebab-case', ({ expect }) => {
+		expect(stylize('myVarName', 'kebab')).toBe('my-var-name');
+		expect(stylize('my_var_name', 'kebab')).toBe('my-var-name');
+		expect(stylize('MyVarName', 'kebab')).toBe('my-var-name');
+		expect(stylize('my-var-name', 'kebab')).toBe('my-var-name');
+		expect(stylize('FOOBarBAZ', 'kebab')).toBe('foo-bar-baz');
+
+		expect(stylize('my__var___name', 'kebab')).toBe('my-var-name');
+		expect(stylize('foo  bar   baz', 'kebab')).toBe('foo-bar-baz');
+	});
+
+	it('to PascalCase', ({ expect }) => {
+		expect(stylize('myVarName', 'pascal')).toBe('MyVarName');
+		expect(stylize('my_var_name', 'pascal')).toBe('MyVarName');
+		expect(stylize('MyVarName', 'pascal')).toBe('MyVarName');
+		expect(stylize('my-var-name', 'pascal')).toBe('MyVarName');
+		expect(stylize('FOOBarBAZ', 'pascal')).toBe('FooBarBaz');
+
+		expect(stylize('my__var___name', 'pascal')).toBe('MyVarName');
+		expect(stylize('foo  bar   baz', 'pascal')).toBe('FooBarBaz');
+	});
+
+	it('to snake_case', ({ expect }) => {
+		expect(stylize('myVarName', 'snake')).toBe('my_var_name');
+		expect(stylize('my_var_name', 'snake')).toBe('my_var_name');
+		expect(stylize('MyVarName', 'snake')).toBe('my_var_name');
+		expect(stylize('my-var-name', 'snake')).toBe('my_var_name');
+		expect(stylize('FOOBarBAZ', 'snake')).toBe('foo_bar_baz');
+
+		expect(stylize('my__var___name', 'pascal')).toBe('MyVarName');
+		expect(stylize('foo  bar   baz', 'pascal')).toBe('FooBarBaz');
+	});
+
+	it('to Title Case', ({ expect }) => {
+		expect(stylize('myVarName', 'title')).toBe('My Var Name');
+		expect(stylize('my_var_name', 'title')).toBe('My Var Name');
+		expect(stylize('MyVarName', 'title')).toBe('My Var Name');
+		expect(stylize('my-var-name', 'title')).toBe('My Var Name');
+		expect(stylize('FOOBarBAZ', 'title')).toBe('Foo Bar Baz');
+
+		expect(stylize('my__var___name', 'title')).toBe('My Var Name');
+		expect(stylize('foo  bar   baz', 'title')).toBe('Foo Bar Baz');
 	});
 });
