@@ -20,4 +20,5 @@ export { random } from './random/index.js';
 export { indent } from './string/indent.js';
 export { capitalize, catenate, tsf } from './string/index.js';
 export { regexp } from './string/regexp.js';
+export { stylize } from './string/stylize.js';
 export { immediate, throttle } from './timing/index.js';
